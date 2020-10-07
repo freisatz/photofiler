@@ -2,5 +2,5 @@
 
 rm -rf /usr/local/lib/perl
 rm /usr/bin/exiftool
-rm /usr/bin/photoscraperd
+rm /usr/bin/photofiler
 
