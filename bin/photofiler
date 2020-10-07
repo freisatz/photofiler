@@ -1,0 +1,8 @@
+#!/bin/sh
+
+SOURCE_DIR="/mnt/HD/HD_a2/Medien/Fotos/Sync"
+TARGET_DIR="/mnt/HD/HD_a2/Medien/Fotos/Chronik"
+
+PATTERN="%Y/%m/%Y%m%d_%H%M%S%%-c.%%e"
+
+exiftool -overwrite_original -P -r -d $TARGET_DIR/$PATTERN "-filename<CreateDate" $SOURCE_DIR
