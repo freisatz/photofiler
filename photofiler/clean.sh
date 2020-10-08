@@ -5,3 +5,5 @@ rm /usr/bin/exiftool
 rm /usr/bin/photofiler
 
 rm -rf /var/www/photofiler/
+
+rm /etc/photofiler.conf

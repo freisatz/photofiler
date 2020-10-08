@@ -22,7 +22,7 @@ You can get the SDK at https://developer.westerndigital.com/develop/wd/sdk/downl
 
 ## Configuration
 
-Currently, the required configuration can be found directly in the script `photofiler/bin/photofiler`.
+Currently, the required configuration can be found in a bash script `photofiler/etc/photofiler.conf`.
 You find the variables that determine the behaviour of the filer, namely
 
 | Name       | Description                                                                       |
