@@ -6,7 +6,7 @@ TARGET_DIR="/mnt/HD/HD_a2/Medien/Fotos/Chronik"
 PATTERN="%Y/%m/%Y%m%d_%H%M%S%%-c.%%e"
 
 # check if process is already running
-for pid in $(pidof -x photofiler); do
+for pid in $(pidof photofiler); do
     if [ $pid != $$ ]; then
         exit 1
     fi
