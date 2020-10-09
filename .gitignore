@@ -1,2 +1,5 @@
-apkg.xml
-apkg.sign
+photofiler/apkg.xml
+photofiler/apkg.sign
+mksapkg-64b
+*.bin(*)
+*.bin
