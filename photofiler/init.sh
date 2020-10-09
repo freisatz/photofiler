@@ -17,4 +17,8 @@ ln -s $path/www/index.html /var/www/photofiler/
 ln -s $path/www/lang/*.xml /var/www/photofiler/
 ln -s $path/www/js/*.js /var/www/photofiler/
 
-ln -s $path/etc/photofiler.conf /etc/
+ln -s $path/bin/photofiler_mgr.cgi /var/www/cgi-bin/
+
+mkdir -p /etc/photofiler/
+
+ln -s $path/etc/photofiler/config.xml /etc/photofiler/

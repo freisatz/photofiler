@@ -1,8 +1,29 @@
 function PhotoFiler_load_data() {
     // TODO
-    $("#i_source_dir").val("/From/Database/Source/")
-    $("#i_target_dir").val("/From/Database/Target/")
-    $("#i_exif_pattern").val("Default")
+    $("#i_source_dir").val("/From/Database/Source/");
+    $("#i_target_dir").val("/From/Database/Target/");
+    $("#i_exif_pattern").val("Default");
+
+    wd_ajax({
+        url: "/cgi-bin/photofiler_mgr.cgi",
+        type: "POST",
+        async: false,
+        cache: false,
+        data:{cmd:'read_data'},	
+        dataType:"xml",
+        success: function(xml){
+            var source_dir = $(xml).find("photofiler").find("source_dir").text();          
+            $("#i_source_dir").val(source_dir);
+            $("#i_source_dir").flexReload();
+            var target_dir = $(xml).find("photofiler").find("target_dir").text();          
+            $("#i_target_dir").val(target_dir);
+            $("#i_target_dir").flexReload();
+            var exif_pattern = $(xml).find("photofiler").find("exif_pattern").text();          
+            $("#i_exif_pattern").val(exif_pattern);
+            $("#i_exif_pattern").flexReload();
+		}
+	});
+
 }
 
 function PhotoFiler_save_data() {

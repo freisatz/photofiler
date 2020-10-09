@@ -6,4 +6,6 @@ rm /usr/bin/photofiler
 
 rm -rf /var/www/photofiler/
 
-rm /etc/photofiler.conf
+rm -rf /etc/photofiler/
+
+rm /var/www/cgi-bin/photofiler_mgr.cgi

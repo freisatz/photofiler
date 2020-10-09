@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<photofiler>
+  <source_dir>Medien/Fotos/Sync/</source_dir>
+  <target_dir>Medien/Fotos/Chronik/</target_dir>
+  <exif_pattern>test</exif_pattern>
+</photofiler>
