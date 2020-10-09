@@ -27,7 +27,17 @@ function PhotoFiler_load_data() {
 }
 
 function PhotoFiler_save_data() {
-    // TODO
+    wd_ajax({
+        url: "/cgi-bin/photofiler_mgr.cgi",
+        type: "POST",
+        async: false,
+        cache: false,
+        data:{cmd:'write_data',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
+        dataType:"xml",
+        success: function(xml){
+            //
+		}
+	});
 }
 
 function PhotoFiler_select_source_dir() {
