@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<text>
+	<_PhotoFiler>		
+		<button_browse len="999">Durchsuchen</button_browse>
+		<button_save len="999">Speichern</button_save>
+		<button_abort len="999">Abbrechen</button_abort>
+		<field_source_dir len="999">Quellverzeichnis</field_source_dir>
+		<field_target_dir len="999">Zielverzeichnis</field_target_dir>
+		<field_exif_pattern len="999">Muster</field_exif_pattern>
+		<field_settings_title len="999">Einstellungen</field_settings_title>
+		<title_select_source_dir len="999">Wähle Quellverzeichnis</title_select_source_dir>
+		<title_select_target_dir len="999">Wähle Zielverzeichnis</title_select_target_dir>
+		<msg_over_select len="999">Es darf nur ein Verzeichnis ausgewählt werden!</msg_over_select>
+  	</_PhotoFiler>
+</text>

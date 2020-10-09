@@ -13,5 +13,8 @@ ln -s $path/bin/photofiler /usr/bin/
 mkdir -p /var/www/photofiler/
 
 ln -s $path/share/images/photofiler.png /var/www/photofiler/
+ln -s $path/www/index.html /var/www/photofiler/
+ln -s $path/www/lang/*.xml /var/www/photofiler/
+ln -s $path/www/js/*.js /var/www/photofiler/
 
 ln -s $path/etc/photofiler.conf /etc/
