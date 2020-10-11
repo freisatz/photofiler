@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Switch;
 
 use CGI;
 use XML::Mini;
@@ -9,55 +10,59 @@ use XML::Mini::Document;
 
 my $c = CGI->new;
 
-if ('POST' eq $c->request_method && $c->param('cmd')) {
+if ('POST' eq $c->request_method) {
 
     my $filename = '/etc/photofiler/config.xml';
 
-    if ('read_data' eq $c->param('cmd')) {
+    switch($c->param('cmd')) {
+        case 'read_settings' {
 
-        print $c->header(
-            -type=>'text/plain',
-            -status=>'200 Success'
-        );
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
 
-        open(FH, '<', $filename) or die $!;
+            open(FH, '<', $filename) or die $!;
 
-        my $record;
+            my $record;
 
-        while($record = <FH>){
-            print $record;
+            while($record = <FH>){
+                print $record;
+            }
+
+            close(FH);
+
+            exit 0
+
         }
+        case 'write_settings' {
 
-        close(FH);
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
 
-        exit 0
+            my $hashref = { 
+                'photofiler' => {
+                    'source_dir' => $c->param('source_dir'), 
+                    'target_dir' => $c->param('target_dir'), 
+                    'exif_pattern' => $c->param('exif_pattern'),
+                },
+            };
+            
+            my $xml = XML::Mini::Document->new();
+            
+            $xml->fromHash($hashref);
+            $xml->toFile($filename);
+            exit 0
 
-    } elsif ('write_data' eq $c->param('cmd')) {
-
-        print $c->header(
+        }
+        else {
+            print $c->header(
             -type=>'text/plain',
-            -status=>'200 Success'
-        );
-
-        my $hashref = { 
-            'photofiler' => {
-                'source_dir' => $c->param('source_dir'), 
-                'target_dir' => $c->param('target_dir'), 
-                'exif_pattern' => $c->param('exif_pattern'),
-            },
-        };
-        
-        my $xml = XML::Mini::Document->new();
-        
-        $xml->fromHash($hashref);
-        $xml->toFile($filename);
-        exit 0
+            -status=>'405 Method Not Allowed'
+            );
+            exit 1
+        }
     }
 }
-
-print $c->header(
-   -type=>'text/plain',
-   -status=>'405 Method Not Allowed'
-);
-
-exit 1

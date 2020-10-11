@@ -4,7 +4,7 @@ function PhotoFiler_load_data() {
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'read_data'},	
+        data:{cmd:'read_settings'},	
         dataType:"xml",
         success: function(xml){
             var source_dir = $(xml).find("photofiler").find("source_dir").text();          
@@ -27,7 +27,7 @@ function PhotoFiler_save_data() {
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'write_data',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
+        data:{cmd:'write_settings',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
         dataType:"xml",
         success: function(xml){
             //
