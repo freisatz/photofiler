@@ -18,7 +18,6 @@ function PhotoFiler_load_data() {
             $("#i_exif_pattern").flexReload();
 		}
 	});
-
 }
 
 function PhotoFiler_save_data() {
@@ -31,6 +30,19 @@ function PhotoFiler_save_data() {
         dataType:"xml",
         success: function(xml){
             //
+		}
+	});
+}
+
+function PhotoFiler_execute_main() {
+    wd_ajax({
+        url: "/cgi-bin/photofiler_mgr.cgi",
+        type: "POST",
+        async: false,
+        cache: false,
+        data:{cmd:'execute_main'},	
+        dataType:"xml",
+        success: function(xml){
 		}
 	});
 }

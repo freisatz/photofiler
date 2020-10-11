@@ -23,18 +23,20 @@ function page_load()
 {
 	$("input:text").inputReset();	
 	
-	
-	{
-		PhotoFiler_load_data();
-		$("#d_settings").show();
-	}	
-	
+	PhotoFiler_load_data();
+	$("#d_settings").show();
+	$("#d_control").show();
+
 	$("#b_save_settings").click(function(){
 		PhotoFiler_save_data();
 	});
 	
 	$("#b_abort_settings").click(function(){
 		PhotoFiler_load_data();
+	});
+
+	$("#b_execute_main").click(function(){
+		PhotoFiler_execute_main();
 	});
 
 	$("#b_select_source_dir").click(function(){
@@ -80,15 +82,26 @@ function page_unload()
     </div>
     
 	<div class="field_top" id="d_control_buttons">
-				<!-- button : Abort -->
-				<button type="button" class="_text" id="b_abort_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_abort"></span></button>
+		<!-- button : Abort -->
+		<button type="button" class="_text" id="b_abort_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_abort"></span></button>
 
-				<span style="display:inline-block; width:10"></span>
+		<span style="display:inline-block; width:10"></span>
 
-				<!-- button : Save -->
-				<button type="button" class="_text" id="b_save_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_save"></span></button>
+		<!-- button : Save -->
+		<button type="button" class="_text" id="b_save_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_save"></span></button>
 	</div>
+
+	<div style="height:40px"></div>
 </div>	
+
+<div id="d_control" style="display:none;">
+	<div class="h1_content header_2"><span class="_apps_text" lang="_PhotoFiler" datafld="field_control_title">Settings</span></div>
+	
+	<div class="field_top" id="d_control_button">
+		<!-- button : Execute -->
+		<button type="button" class="_text" id="b_execute_main"><span class="_apps_text" lang="_PhotoFiler" datafld="button_execute"></span></button>
+	</div>
+</div>
 
 </body>
 </html>
