@@ -9,9 +9,6 @@ chomp($pidof);
 my @pids = split / /, $pidof;
 
 for my $pid (@pids) {
-    print "a: ";
-    print $pid . ",";
-    print $$ . "\n";
     if ($pid != $$) {
         print "Process is already running!";
         exit 1;
@@ -19,6 +16,7 @@ for my $pid (@pids) {
 }
 
 $config_file = '/etc/photofiler/config.xml';
+$log_file = '/var/log/photofiler.log';
 
 # create a new object
 my $xml = XML::Mini::Document->new();
@@ -30,18 +28,21 @@ my $source_dir = $xml->getElementByPath('photofiler/source_dir');
 my $target_dir = $xml->getElementByPath('photofiler/target_dir');
 my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
 
-print 'Execute exiftool:';
-print "\n";
-print '    Source directory: ' . $source_dir->text();
-print "\n";
-print '    Target directory: ' . $target_dir->text();
-print "\n";
-print '    Exif pattern:     ' . $exif_pattern->text();
-print "\n";
+open(FH, '>', $log_file) or die $!;
+
+my $date = `date`;
+chomp($date);
 
 my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
 my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
 my $exif_pattern_val = $exif_pattern->text();
 my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val";
 
-system($cmd);
+print FH "[" . $date . "] Execute exiftool:\n";
+print FH "  Source directory: " . $source_dir_val . "\n";
+print FH "  Target directory: " . $target_dir_val . "\n";
+print FH "  Exif pattern:     " . $exif_pattern_val . "\n";
+print FH "  Output exiftool:\n";
+print FH `$cmd`;
+
+close(FH);
