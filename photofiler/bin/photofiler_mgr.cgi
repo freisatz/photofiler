@@ -57,6 +57,16 @@ if ('POST' eq $c->request_method) {
             exit 0
 
         }
+        case 'execute_main' {
+
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
+
+            system('photofiler');
+            exit 0;
+        }
         else {
             print $c->header(
             -type=>'text/plain',

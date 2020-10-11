@@ -5,7 +5,7 @@ This is an implementation of an App Package to be used with a WD My Cloud OS3 NA
 
 https://developer.westerndigital.com/develop/wd/sdk.html
 
-This tool is based on exiftool, see www.exiftool.org.
+This tool is based on exiftool, see http://www.exiftool.org.
 
 ## Build
 To create a binary, use the toolchain provided by Western Digital
@@ -22,11 +22,30 @@ You can get the SDK at https://developer.westerndigital.com/develop/wd/sdk/downl
 
 ## Configuration
 
-Currently, the required configuration can be found in a bash script `photofiler/etc/photofiler.conf`.
-You find the variables that determine the behaviour of the filer, namely
+To configure this tool, you can use the dedicated settings page in the Apps section of the WD My Cloud web interface.
 
-| Name       | Description                                                                       |
-|:-----------|:----------------------------------------------------------------------------------|
-| SOURCE_DIR | The source directory for photos to be filed in the folder structure.              |
-| TARGET_DIR | Base folder of the folder structure.                                              |
-| PATTERN    | String that determines the folder structure. See `man exiftool` for more details. |
+The following variables can be set in order to determine the behaviour of the filer:
+
+| Name             | Description                                                                       |
+|:-----------------|:----------------------------------------------------------------------------------|
+| Source directory | The source directory for photos to be filed in the folder structure.              |
+| Target directory | Base folder of the folder structure.                                              |
+| Pattern          | String that determines the folder structure. See `man exiftool` for more details. |
+
+ All the configuration data is stored as XML following the scheme
+
+ ```
+ <photofiler>
+  <source_dir>...</source_dir>
+  <target_dir>...</target_dir>
+  <exif_pattern>...</exif_pattern>
+ </photofiler>
+ ```
+
+ in the config file located at `/etc/photofiler/config.xml`.
+
+## Execution
+
+The script, if the app is activated and correctly configured, is automatically executed every hour. When executed, a log is created in `/var/log/photofiler.log`.
+
+You can also execute the script manually in the web interface.

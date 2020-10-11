@@ -17,6 +17,7 @@ ln -s $path/share/images/photofiler.png /var/www/photofiler/
 ln -s $path/www/index.html /var/www/photofiler/
 ln -s $path/www/lang/*.xml /var/www/photofiler/
 ln -s $path/www/js/*.js /var/www/photofiler/
+ln -s $path/www/desc.xml /var/www/photofiler/
 
 ln -s $path/bin/photofiler_mgr.cgi /var/www/cgi-bin/
 
