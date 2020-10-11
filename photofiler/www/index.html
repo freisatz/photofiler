@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<style>
+a {FONT-SIZE: 15px; FONT-FAMILY: Helvetica, Geneva, Arial, sans-serif;}
+
+.sel{
+	background-color: #0067A6;
+	border: 2px solid #0067A6;
+}
+
+</style>	
+
+<script type="text/javascript" src="/photofiler/photofiler_settings.js"></script>
+<script type="text/javascript" src="/photofiler/language.js"></script>
+<script type="text/javascript">
+
+function page_load()
+{
+	$("input:text").inputReset();	
+	
+	
+	{
+		PhotoFiler_load_data();
+		$("#d_settings").show();
+	}	
+	
+	$("#b_save_settings").click(function(){
+		PhotoFiler_save_data();
+	});
+	
+	$("#b_abort_settings").click(function(){
+		PhotoFiler_load_data();
+	});
+
+	$("#b_select_source_dir").click(function(){
+		PhotoFiler_select_source_dir();
+	});
+
+	$("#b_select_target_dir").click(function(){
+		PhotoFiler_select_target_dir();
+	});
+	
+	//Load Muti-language
+	apps_ready_language();
+}
+
+function page_unload()
+{
+	
+}	
+</script>
+</head>
+<body>
+	
+<div id="d_settings" style="display:none;">
+	<div class="h1_content header_2"><span class="_apps_text" lang="_PhotoFiler" datafld="field_settings_title">Settings</span></div>	
+		
+	<div class="field_top" id="d_setting_fields">
+		<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" border="1" width="100%">
+			<tr>
+				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_source_dir"></span></td>
+				<td class="tdfield_padding" width="350px"><input class="input_x5" type="text" name="i_source_dir" id="i_source_dir" size="37"></td>
+				<td class="tdfield_padding"><button type="button" id="b_select_source_dir"><span class="_apps_text" lang="_PhotoFiler" datafld="button_browse"></span></button></td>
+			</tr>
+			<tr>
+				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_target_dir"></span></td>
+				<td class="tdfield_padding" width="350px"><input class="input_x5" type="text" name="i_source_dir" id="i_target_dir" size="37"></td>
+				<td class="tdfield_padding"><button type="button" id="b_select_target_dir"><span class="_apps_text" lang="_PhotoFiler" datafld="button_browse"></span></button></td>
+			</tr>
+			<tr>
+				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_exif_pattern"></span></td>
+				<td class="tdfield_padding" colspan="2"><input class="input_x5" type="text" name="i_exif_pattern" id="i_exif_pattern" size="37"></td>
+			</tr>
+		</table>		         
+    </div>
+    
+	<div class="field_top" id="d_control_buttons">
+				<!-- button : Abort -->
+				<button type="button" class="_text" id="b_abort_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_abort"></span></button>
+
+				<span style="display:inline-block; width:10"></span>
+
+				<!-- button : Save -->
+				<button type="button" class="_text" id="b_save_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_save"></span></button>
+	</div>
+</div>	
+
+</body>
+</html>

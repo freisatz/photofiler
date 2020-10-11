@@ -1,15 +1,47 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-# read config file
-source /etc/photofiler.conf
+use XML::Mini;
+use XML::Mini::Document;
 
 # check if process is already running
-for pid in $(pidof photofiler); do
-    if [ $pid != $$ ]; then
-        echo "Process is already running!"
-        exit 1
-    fi
-done
+my $pidof = `pidof photofiler`;
+chomp($pidof);
+my @pids = split / /, $pidof;
 
-# move files to folder structure
-exiftool -overwrite_original -P -r -d $TARGET_DIR/$PATTERN "-filename<CreateDate" $SOURCE_DIR
+for my $pid (@pids) {
+    print "a: ";
+    print $pid . ",";
+    print $$ . "\n";
+    if ($pid != $$) {
+        print "Process is already running!";
+        exit 1;
+    }
+}
+
+$config_file = '/etc/photofiler/config.xml';
+
+# create a new object
+my $xml = XML::Mini::Document->new();
+
+# init the doc from an XML string
+$xml->fromFile($config_file);
+
+my $source_dir = $xml->getElementByPath('photofiler/source_dir');
+my $target_dir = $xml->getElementByPath('photofiler/target_dir');
+my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
+
+print 'Execute exiftool:';
+print "\n";
+print '    Source directory: ' . $source_dir->text();
+print "\n";
+print '    Target directory: ' . $target_dir->text();
+print "\n";
+print '    Exif pattern:     ' . $exif_pattern->text();
+print "\n";
+
+my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
+my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
+my $exif_pattern_val = $exif_pattern->text();
+my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val";
+
+system($cmd);
