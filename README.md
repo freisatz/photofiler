@@ -22,12 +22,28 @@ You can get the SDK at https://developer.westerndigital.com/develop/wd/sdk/downl
 
 ## Configuration
 
-To configure this tool, you can use the web interface. All the configuration data is stored in `/etc/photofiler/config.xml`.
+To configure this tool, you can use the dedicated settings page in the Apps section of the WD My Cloud web interface.
 
-You find the variables that determine the behaviour of the filer, namely
+The following variables can be set in order to determine the behaviour of the filer:
 
-| Name            | Description                                                                       |
-|:----------------|:----------------------------------------------------------------------------------|
-| source_dir      | The source directory for photos to be filed in the folder structure.              |
-| target_dir      | Base folder of the folder structure.                                              |
-| exif_pattern    | String that determines the folder structure. See `man exiftool` for more details. |
+| Name             | Description                                                                       |
+|:-----------------|:----------------------------------------------------------------------------------|
+| Source directory | The source directory for photos to be filed in the folder structure.              |
+| Target directory | Base folder of the folder structure.                                              |
+| Pattern          | String that determines the folder structure. See `man exiftool` for more details. |
+
+ All the configuration data is stored as XML following the scheme
+
+ ```
+ <photofiler>
+  <source_dir>...</source_dir>
+  <target_dir>...</target_dir>
+  <exif_pattern>...</exif_pattern>
+ </photofiler>
+ ```
+
+ in the config file located at `/etc/photofiler/config.xml`.
+
+# Execution
+
+The script, if the app is activated and correctly configured, is automatically executed every hour. When executed, a log is created in `/var/log/photofiler.log`.
