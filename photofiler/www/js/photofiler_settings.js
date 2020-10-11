@@ -1,9 +1,4 @@
 function PhotoFiler_load_data() {
-    // TODO
-    $("#i_source_dir").val("/From/Database/Source/");
-    $("#i_target_dir").val("/From/Database/Target/");
-    $("#i_exif_pattern").val("Default");
-
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",

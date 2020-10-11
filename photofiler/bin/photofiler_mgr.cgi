@@ -4,7 +4,8 @@ use strict;
 use warnings;
 
 use CGI;
-use XML::Simple;
+use XML::Mini;
+use XML::Mini::Document;
 
 my $c = CGI->new;
 
@@ -38,15 +39,18 @@ if ('POST' eq $c->request_method && $c->param('cmd')) {
             -status=>'200 Success'
         );
 
-        my $hashref = { source_dir => [ $c->param('source_dir') ], target_dir => [ $c->param('target_dir') ], exif_pattern => [ $c->param('exif_pattern') ]};
-        my $xml = XML::Simple::XMLout($hashref, RootName => 'photofiler', XMLDecl => 1);
-
-        open(FH, '>', $filename) or die $!;
-
-        print FH $xml;
-
-        close(FH);
-
+        my $hashref = { 
+            'photofiler' => {
+                'source_dir' => $c->param('source_dir'), 
+                'target_dir' => $c->param('target_dir'), 
+                'exif_pattern' => $c->param('exif_pattern'),
+            },
+        };
+        
+        my $xml = XML::Mini::Document->new();
+        
+        $xml->fromHash($hashref);
+        $xml->toFile($filename);
         exit 0
     }
 }

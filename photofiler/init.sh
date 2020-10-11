@@ -6,7 +6,7 @@ mkdir -p /usr/local/lib/perl/5.10.1
 
 ln -s $path/share/Image-ExifTool-12.07/lib/Image /usr/local/lib/perl/5.10.1/
 ln -s $path/share/Image-ExifTool-12.07/lib/File /usr/local/lib/perl/5.10.1/
-ln -s $path/share/XML-Simple-2.25/lib/XML /usr/local/lib/perl/5.10.1/
+ln -s $path/share/XML-Mini-1.38/lib/XML /usr/local/lib/perl/5.10.1/
 
 ln -s $path/share/Image-ExifTool-12.07/exiftool /usr/bin/
 ln -s $path/bin/photofiler /usr/bin/
