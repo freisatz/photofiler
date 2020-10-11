@@ -5,7 +5,7 @@ This is an implementation of an App Package to be used with a WD My Cloud OS3 NA
 
 https://developer.westerndigital.com/develop/wd/sdk.html
 
-This tool is based on exiftool, see www.exiftool.org.
+This tool is based on exiftool, see http://www.exiftool.org.
 
 ## Build
 To create a binary, use the toolchain provided by Western Digital
@@ -22,11 +22,12 @@ You can get the SDK at https://developer.westerndigital.com/develop/wd/sdk/downl
 
 ## Configuration
 
-Currently, the required configuration can be found in a bash script `photofiler/etc/photofiler.conf`.
+To configure this tool, you can use the web interface. All the configuration data is stored in `/etc/photofiler/config.xml`.
+
 You find the variables that determine the behaviour of the filer, namely
 
-| Name       | Description                                                                       |
-|:-----------|:----------------------------------------------------------------------------------|
-| SOURCE_DIR | The source directory for photos to be filed in the folder structure.              |
-| TARGET_DIR | Base folder of the folder structure.                                              |
-| PATTERN    | String that determines the folder structure. See `man exiftool` for more details. |
+| Name            | Description                                                                       |
+|:----------------|:----------------------------------------------------------------------------------|
+| source_dir      | The source directory for photos to be filed in the folder structure.              |
+| target_dir      | Base folder of the folder structure.                                              |
+| exif_pattern    | String that determines the folder structure. See `man exiftool` for more details. |
