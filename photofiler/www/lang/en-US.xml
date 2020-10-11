@@ -3,7 +3,7 @@
 	<_PhotoFiler>
 		<button_browse len="999">Browse</button_browse>
 		<button_save len="999">Save</button_save>
-		<button_abort len="999">Abort</button_abort>
+		<button_reset len="999">Reset</button_reset>
 		<button_execute len="999">Execute</button_execute>
 		<field_source_dir len="999">Source Directory</field_source_dir>
 		<field_target_dir len="999">Target Directory</field_target_dir>
