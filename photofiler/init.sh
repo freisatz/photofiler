@@ -10,6 +10,7 @@ ln -s $path/share/XML-Mini-1.38/lib/XML /usr/local/lib/perl/5.10.1/
 
 ln -s $path/share/Image-ExifTool-12.07/exiftool /usr/bin/
 ln -s $path/bin/photofiler /usr/bin/
+ln -s $path/bin/photofiler-scheduler /usr/bin/
 
 mkdir -p /var/www/photofiler/
 
@@ -24,3 +25,4 @@ ln -s $path/bin/photofiler_mgr.cgi /var/www/cgi-bin/
 mkdir -p /etc/photofiler/
 
 ln -s $path/etc/photofiler/config.xml /etc/photofiler/
+ln -s $path/etc/photofiler/schedule.xml /etc/photofiler/

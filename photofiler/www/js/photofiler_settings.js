@@ -20,6 +20,22 @@ function PhotoFiler_load_data() {
 	});
 }
 
+function PhotoFiler_load_schedule_data() {
+    wd_ajax({
+        url: "/cgi-bin/photofiler_mgr.cgi",
+        type: "POST",
+        async: false,
+        cache: false,
+        data:{cmd:'read_schedule_data'},	
+        dataType:"xml",
+        success: function(xml){
+            var active = $(xml).find("photofiler").find("active").text();     
+            setSwitch('#i_activate_schedule', active);           
+            $("#i_activate_schedule").flexReload();
+		}
+	});
+}
+
 function PhotoFiler_save_data() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
@@ -40,7 +56,7 @@ function PhotoFiler_activate_schedule() {
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'activate_schedule',activate:getSwitch("#i_activate_schedule")},	
+        data:{cmd:'activate_schedule',active:getSwitch("#i_activate_schedule")},	
         dataType:"xml",
         success: function(xml){
             //

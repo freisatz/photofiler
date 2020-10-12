@@ -1,0 +1,64 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+use Switch;
+
+use XML::Mini;
+use XML::Mini::Document;
+
+my $length = @ARGV;
+
+my $schedule_config_file = '/etc/photofiler/schedule.xml';
+
+if($length < 1) {
+	print "No argument given!\n";
+	exit 1;
+}
+
+sub remove_from_crontab {
+	system('sed -i "/photofiler/d" /var/spool/cron/crontabs/root');
+	system('killall crond');
+	system('crond');
+}
+
+sub add_to_crontab {
+	system('echo "0 * * * * photofiler" >> /var/spool/cron/crontabs/root');
+	system('killall crond');
+	system('crond');
+}
+
+sub config_active {
+		
+	# create a new object
+	my $xml = XML::Mini::Document->new();
+
+	# init the doc from an XML string
+	$xml->fromFile($schedule_config_file);
+
+	return $xml->getElementByPath('photofiler/active')->text();
+}
+
+switch($ARGV[0]) {
+	case 'start' {
+		# read from config and decide whether to add to crontab
+		print "Start!\n";
+		if(config_active()) {
+			add_to_crontab();
+		}
+	}
+	case 'stop' {
+		# remove from crontab
+		remove_from_crontab();
+	}
+	case 'update' {
+		# update config and remove from crontab
+		remove_from_crontab();
+		if(config_active()) {
+			add_to_crontab();
+		}
+	}
+	else {
+		print "Action not recognized.\n";
+	}
+}

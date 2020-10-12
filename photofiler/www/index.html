@@ -23,10 +23,11 @@ function page_load()
 {
 	$("input:text").inputReset();	
 
-	setSwitch('#i_activate_schedule', 0);
-	init_switch();
-	
 	PhotoFiler_load_data();
+	PhotoFiler_load_schedule_data();
+
+	init_switch();
+
 	$("#d_settings").show();
 	$("#d_control").show();
 
