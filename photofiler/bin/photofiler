@@ -3,10 +3,13 @@
 use XML::Mini;
 use XML::Mini::Document;
 
+# Set config file locations
 $config_file = '/etc/photofiler/config.xml';
+
+# Set log file locations
 $log_file = '/var/log/photofiler.log';
 
-# check if process is already running
+# Check if process is already running
 my $pidof = `pidof photofiler`;
 chomp($pidof);
 my @pids = split / /, $pidof;
@@ -18,21 +21,26 @@ for my $pid (@pids) {
     }
 }
 
-# create a new object
+# Create a new object
 my $xml = XML::Mini::Document->new();
 
-# init the doc from an XML string
+# Init the doc from config file
 $xml->fromFile($config_file);
 
+# Read elements from XML data
 my $source_dir = $xml->getElementByPath('photofiler/source_dir');
 my $target_dir = $xml->getElementByPath('photofiler/target_dir');
 my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
 
+# Prepare variables
 my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
 my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
 my $exif_pattern_val = $exif_pattern->text();
+
+# Prepare exiftool command
 my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val >> $log_file";
 
+# Print stats to log file
 my $date = `date`;
 chomp($date);
 
@@ -46,4 +54,5 @@ print FH "  Output exiftool:\n";
 
 close(FH);
 
+# Execute exiftool
 system($cmd);
