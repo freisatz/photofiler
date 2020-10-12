@@ -44,8 +44,9 @@ The following variables can be set in order to determine the behaviour of the fi
 
  in the config file located at `/etc/photofiler/config.xml`.
 
-## Execution
-
-The script, if the app is activated and correctly configured, is automatically executed every hour. When executed, a log is created in `/var/log/photofiler.log`.
+## Usage
+The app, if activated, can run the script to file photos using a schedule, or by manual request. In the web interface, you find a switch to activate the service, which after activation will run the script once every hour.
 
 You can also execute the script manually in the web interface.
+
+When executed, a log is created in `/var/log/photofiler.log`.

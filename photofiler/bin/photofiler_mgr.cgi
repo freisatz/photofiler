@@ -12,7 +12,8 @@ my $c = CGI->new;
 
 if ('POST' eq $c->request_method) {
 
-    my $filename = '/etc/photofiler/config.xml';
+    my $config_file = '/etc/photofiler/config.xml';
+    my $schedule_config_file = '/etc/photofiler/schedule.xml';
 
     switch($c->param('cmd')) {
         case 'read_settings' {
@@ -22,7 +23,7 @@ if ('POST' eq $c->request_method) {
                 -status=>'200 Success'
             );
 
-            open(FH, '<', $filename) or die $!;
+            open(FH, '<', $config_file) or die $!;
 
             my $record;
 
@@ -32,7 +33,27 @@ if ('POST' eq $c->request_method) {
 
             close(FH);
 
-            exit 0
+            exit 0;
+
+        }
+        case 'read_schedule_data' {
+
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
+
+            open(FH, '<', $schedule_config_file) or die $!;
+
+            my $record;
+
+            while($record = <FH>){
+                print $record;
+            }
+
+            close(FH);
+
+            exit 0;
 
         }
         case 'write_settings' {
@@ -53,8 +74,8 @@ if ('POST' eq $c->request_method) {
             my $xml = XML::Mini::Document->new();
             
             $xml->fromHash($hashref);
-            $xml->toFile($filename);
-            exit 0
+            $xml->toFile($config_file);
+            exit 0;
 
         }
         case 'execute_main' {
@@ -67,10 +88,31 @@ if ('POST' eq $c->request_method) {
             system('photofiler');
             exit 0;
         }
+        case 'activate_schedule' {
+
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
+
+            my $hashref = { 
+                'photofiler' => {
+                    'active' => $c->param('active'),
+                },
+            };
+            
+            my $xml = XML::Mini::Document->new();
+            
+            $xml->fromHash($hashref);
+            $xml->toFile($schedule_config_file);
+
+            system('photofiler-scheduler update');
+            exit 0;
+        }
         else {
             print $c->header(
-            -type=>'text/plain',
-            -status=>'405 Method Not Allowed'
+                -type=>'text/plain',
+                -status=>'405 Method Not Allowed'
             );
             exit 1
         }
