@@ -42,7 +42,6 @@ sub config_active {
 switch($ARGV[0]) {
 	case 'start' {
 		# read from config and decide whether to add to crontab
-		print "Start!\n";
 		if(config_active()) {
 			add_to_crontab();
 		}
@@ -51,7 +50,7 @@ switch($ARGV[0]) {
 		# remove from crontab
 		remove_from_crontab();
 	}
-	case 'update' {
+	case 'restart' {
 		# update config and remove from crontab
 		remove_from_crontab();
 		if(config_active()) {

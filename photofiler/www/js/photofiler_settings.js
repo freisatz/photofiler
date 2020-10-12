@@ -1,4 +1,4 @@
-function PhotoFiler_load_data() {
+function PhotoFiler_load_settings() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",
@@ -20,13 +20,13 @@ function PhotoFiler_load_data() {
 	});
 }
 
-function PhotoFiler_load_schedule_data() {
+function PhotoFiler_load_schedule_settings() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'read_schedule_data'},	
+        data:{cmd:'read_schedule_settings'},	
         dataType:"xml",
         success: function(xml){
             var active = $(xml).find("photofiler").find("active").text();     
@@ -36,7 +36,7 @@ function PhotoFiler_load_schedule_data() {
 	});
 }
 
-function PhotoFiler_save_data() {
+function PhotoFiler_save_settings() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",

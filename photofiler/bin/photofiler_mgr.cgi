@@ -36,7 +36,7 @@ if ('POST' eq $c->request_method) {
             exit 0;
 
         }
-        case 'read_schedule_data' {
+        case 'read_schedule_settings' {
 
             print $c->header(
                 -type=>'text/plain',
@@ -106,7 +106,8 @@ if ('POST' eq $c->request_method) {
             $xml->fromHash($hashref);
             $xml->toFile($schedule_config_file);
 
-            system('photofiler-scheduler update');
+            system('photofiler-scheduler restart');
+            
             exit 0;
         }
         else {
