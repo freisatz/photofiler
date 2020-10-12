@@ -12,7 +12,7 @@ my $c = CGI->new;
 
 if ('POST' eq $c->request_method) {
 
-    my $filename = '/etc/photofiler/config.xml';
+    my $config_file = '/etc/photofiler/config.xml';
 
     switch($c->param('cmd')) {
         case 'read_settings' {
@@ -22,7 +22,7 @@ if ('POST' eq $c->request_method) {
                 -status=>'200 Success'
             );
 
-            open(FH, '<', $filename) or die $!;
+            open(FH, '<', $config_file) or die $!;
 
             my $record;
 
@@ -53,7 +53,7 @@ if ('POST' eq $c->request_method) {
             my $xml = XML::Mini::Document->new();
             
             $xml->fromHash($hashref);
-            $xml->toFile($filename);
+            $xml->toFile($config_file);
             exit 0
 
         }
@@ -65,6 +65,23 @@ if ('POST' eq $c->request_method) {
             );
 
             system('photofiler');
+            exit 0;
+        }
+        case 'activate_schedule' {
+
+            print $c->header(
+                -type=>'text/plain',
+                -status=>'200 Success'
+            );
+            my $var = $c->param('activate');
+            system("echo $var > /var/log/asdf.log");
+
+            # if('True' eq $c->param('activate')) {
+            #     system('echo "HALLO" > /var/log/asdf.log')
+            # } 
+            # else {
+            #     system('photofilerd stop')
+            # }
             exit 0;
         }
         else {

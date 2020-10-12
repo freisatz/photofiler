@@ -34,6 +34,20 @@ function PhotoFiler_save_data() {
 	});
 }
 
+function PhotoFiler_activate_schedule() {
+    wd_ajax({
+        url: "/cgi-bin/photofiler_mgr.cgi",
+        type: "POST",
+        async: false,
+        cache: false,
+        data:{cmd:'activate_schedule',activate:getSwitch("#i_activate_schedule")},	
+        dataType:"xml",
+        success: function(xml){
+            //
+		}
+	});
+}
+
 function PhotoFiler_execute_main() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",

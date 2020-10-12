@@ -22,6 +22,9 @@ a {FONT-SIZE: 15px; FONT-FAMILY: Helvetica, Geneva, Arial, sans-serif;}
 function page_load()
 {
 	$("input:text").inputReset();	
+
+	setSwitch('#i_activate_schedule', 0);
+	init_switch();
 	
 	PhotoFiler_load_data();
 	$("#d_settings").show();
@@ -35,6 +38,10 @@ function page_load()
 		PhotoFiler_load_data();
 	});
 
+	$("#i_activate_schedule").click(function(){
+		PhotoFiler_activate_schedule();
+	});
+	
 	$("#b_execute_main").click(function(){
 		PhotoFiler_execute_main();
 	});
@@ -94,9 +101,20 @@ function page_unload()
 	<div style="height:40px"></div>
 </div>	
 
-<div id="d_control" style="display:none;">
+<div id="d_control" style="display:none;">	
 	<div class="h1_content header_2"><span class="_apps_text" lang="_PhotoFiler" datafld="field_control_title">Settings</span></div>
 	
+	<div class="field_top">
+		<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" border="1" width="100%">
+			<tr>
+				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_activate_schedule"></span></td>
+				<td class="tdfield_padding" width="350px" colspan="2">
+					<input id="i_activate_schedule" name="i_activate_schedule" class="onoffswitch" type="checkbox" value="true">
+				</td>
+			</tr>
+		</table>
+	</div>
+
 	<div class="field_top" id="d_control_button">
 		<!-- button : Execute -->
 		<button type="button" class="_text" id="b_execute_main"><span class="_apps_text" lang="_PhotoFiler" datafld="button_execute"></span></button>
