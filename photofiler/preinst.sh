@@ -1,5 +1,6 @@
 #!/bin/sh
 
-path_src=$1
-path_des=$2
-# do nothing here
+path_des=$1
+
+mkdir -p /mnt/HD/HD_a2/.systemfile/photofiler/
+cp -R $path_des/etc /mnt/HD/HD_a2/.systemfile/photofiler/
