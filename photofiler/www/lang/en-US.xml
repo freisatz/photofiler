@@ -13,6 +13,7 @@
 		<field_control_title len="999">Control</field_control_title>
 		<title_select_source_dir len="999">Select source directory</title_select_source_dir>
 		<title_select_target_dir len="999">Select target directory</title_select_target_dir>
+		<msg_execute len="999">Filing photos in folder...</msg_execute>
 		<msg_over_select len="999">Selection has to be unique!</msg_over_select>
   	</_PhotoFiler>
 </text>

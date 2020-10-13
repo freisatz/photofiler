@@ -65,14 +65,16 @@ function PhotoFiler_activate_schedule() {
 }
 
 function PhotoFiler_execute_main() {
+    jLoading(apps_T('_PhotoFiler','msg_execute'), 'loading' ,'s', "");
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",
-        async: false,
+        async: true,
         cache: false,
         data:{cmd:'execute_main'},	
         dataType:"xml",
         success: function(xml){
+            jLoadingClose();
 		}
 	});
 }

@@ -13,6 +13,7 @@
 		<field_control_title len="999">Steuerung</field_control_title>
 		<title_select_source_dir len="999">Wähle Quellverzeichnis</title_select_source_dir>
 		<title_select_target_dir len="999">Wähle Zielverzeichnis</title_select_target_dir>
+		<msg_execute len="999">Fotos werden sortiert...</msg_execute>
 		<msg_over_select len="999">Es darf nur ein Verzeichnis ausgewählt werden!</msg_over_select>
   	</_PhotoFiler>
 </text>
