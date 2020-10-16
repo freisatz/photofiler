@@ -27,13 +27,14 @@ sub remove_from_crontab {
 
 # Adds a schedule for photofiler to crontab
 sub add_to_crontab {
-	system('echo "0 * * * * photofiler" >> /var/spool/cron/crontabs/root');
+	my $hour = $_[0];
+	system("echo \"0 $hour * * * photofiler\" >> /var/spool/cron/crontabs/root");
 	system('killall crond');
 	system('crond');
 }
 
 # Returns 1 if config is set active in config file, 0 otherwise
-sub config_active {
+sub read_config {
 		
 	# Create a new object
 	my $xml = XML::Mini::Document->new();
@@ -41,14 +42,26 @@ sub config_active {
 	# Init the doc from config file
 	$xml->fromFile($schedule_config_file);
 
-	return $xml->getElementByPath('photofiler/active')->text();
+	# Read values
+	my $active = 0;
+	if($xml->getElementByPath('photofiler/active')) {
+		$active = $xml->getElementByPath('photofiler/active')->text() ? "1" : "0";
+	}
+
+	my $hour = 0;
+	if($xml->getElementByPath('photofiler/hour')) {
+		$hour = $xml->getElementByPath('photofiler/hour')->text();
+	}
+
+	return ($active, $hour);
 }
 
 switch($ARGV[0]) {
 	# Add cronjob if necessary 
 	case 'start' {
-		if(config_active()) {
-			add_to_crontab();
+		my ($active, $hour) = read_config();
+		if($active) {
+			add_to_crontab($hour);
 		}
 	}
 	# Remove cronjob
@@ -58,8 +71,9 @@ switch($ARGV[0]) {
 	# Remove cronjob and readd if necessary
 	case 'restart' {
 		remove_from_crontab();
-		if(config_active()) {
-			add_to_crontab();
+		my ($active, $hour) = read_config();
+		if($active) {
+			add_to_crontab($hour);
 		}
 	}
 	# Default action

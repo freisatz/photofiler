@@ -92,12 +92,11 @@ if ('POST' eq $c->request_method) {
                 -type=>'text/plain',
                 -status=>'200 Success'
             );
-
             system('photofiler');
             exit 0;
         }
         # Write schedule setting to config file
-        case 'activate_schedule' {
+        case 'edit_schedule' {
 
             print $c->header(
                 -type=>'text/plain',
@@ -107,6 +106,7 @@ if ('POST' eq $c->request_method) {
             my $hashref = { 
                 'photofiler' => {
                     'active' => $c->param('active'),
+                    'hour' => $c->param('hour'),
                 },
             };
             

@@ -20,6 +20,36 @@ function PhotoFiler_load_settings() {
 	});
 }
 
+function PhotoFiler_hour_mapping(hour) {
+    var hour_array = new Array(
+        '00:00',
+        '01:00',
+        '02:00',
+        '03:00',
+        '04:00',
+        '05:00',
+        '06:00',
+        '07:00',
+        '08:00',
+        '09:00',
+        '10:00',
+        '11:00',
+        '12:00',
+        '13:00',
+        '14:00',
+        '15:00',
+        '16:00',
+        '17:00',
+        '18:00',
+        '19:00',
+        '20:00',
+        '21:00',
+        '22:00',
+        '23:00'
+    );
+    return hour_array[hour];
+}
+
 function PhotoFiler_load_schedule_settings() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
@@ -32,6 +62,8 @@ function PhotoFiler_load_schedule_settings() {
             var active = $(xml).find("photofiler").find("active").text();     
             setSwitch('#i_activate_schedule', active);           
             $("#i_activate_schedule").flexReload();
+            var hour = $(xml).find("photofiler").find("hour").text();  
+			reset_sel_item("#hour_schedule_select",PhotoFiler_hour_mapping(hour),hour);
 		}
 	});
 }
@@ -40,7 +72,7 @@ function PhotoFiler_save_settings() {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",
-        async: false,
+        async: true,
         cache: false,
         data:{cmd:'write_settings',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
         dataType:"xml",
@@ -50,13 +82,13 @@ function PhotoFiler_save_settings() {
 	});
 }
 
-function PhotoFiler_activate_schedule() {
+function PhotoFiler_edit_schedule(hours) {
     wd_ajax({
         url: "/cgi-bin/photofiler_mgr.cgi",
         type: "POST",
-        async: false,
+        async: true,
         cache: false,
-        data:{cmd:'activate_schedule',active:getSwitch("#i_activate_schedule")},	
+        data:{cmd:'edit_schedule',active:getSwitch("#i_activate_schedule"),hour:hours},	
         dataType:"xml",
         success: function(xml){
             //
