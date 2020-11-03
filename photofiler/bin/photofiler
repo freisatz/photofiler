@@ -57,7 +57,7 @@ if (!(is_running())) {
 
     open(FH, '>>', $log_file) or die $!;
 
-    print FH "[" . get_timestamp() . "] Execute exiftool with parameters specified in $log_file.\n";
+    print FH "[" . get_timestamp() . "] Execute exiftool with parameters specified in $config_file.\n";
     print FH "    Source directory: $source_dir_val\n";
     print FH "    Target directory: $target_dir_val\n";
     print FH "    Exif pattern:     $exif_pattern_val\n";
