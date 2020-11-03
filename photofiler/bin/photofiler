@@ -1,49 +1,89 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use XML::Mini;
 use XML::Mini::Document;
 
+# Set config file locations
 $config_file = '/etc/photofiler/config.xml';
+
+# Set log file locations
 $log_file = '/var/log/photofiler.log';
 
-# check if process is already running
-my $pidof = `pidof photofiler`;
-chomp($pidof);
-my @pids = split / /, $pidof;
+# Returns true if process is already running
+sub is_running {
+    my $pidof = `pidof photofiler`;
+    chomp($pidof);
+    my @pids = split / /, $pidof;
 
-for my $pid (@pids) {
-    if ($pid != $$) {
-        print "Process is already running!\n";
-        exit 1;
+    for my $pid (@pids) {
+        if ($pid != $$) {
+            return 1;
+        }
     }
+    return 0;
 }
 
-# create a new object
-my $xml = XML::Mini::Document->new();
+# Returns current timestamp
+sub get_timestamp {
+    my $date = `date`;
+    chomp($date);
+    return $date;
+}
 
-# init the doc from an XML string
-$xml->fromFile($config_file);
+# Print stats to log file
+open(FH, '>>', $log_file) or die $!;
 
-my $source_dir = $xml->getElementByPath('photofiler/source_dir');
-my $target_dir = $xml->getElementByPath('photofiler/target_dir');
-my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
-
-my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
-my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
-my $exif_pattern_val = $exif_pattern->text();
-my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val >> $log_file";
-
-my $date = `date`;
-chomp($date);
-
-open(FH, '>', $log_file) or die $!;
-
-print FH "[" . $date . "] Execute exiftool:\n";
-print FH "  Source directory: " . $source_dir_val . "\n";
-print FH "  Target directory: " . $target_dir_val . "\n";
-print FH "  Exif pattern:     " . $exif_pattern_val . "\n";
-print FH "  Output exiftool:\n";
+print FH "[" . get_timestamp() . "] Starting photofiler...\n";
 
 close(FH);
 
-system($cmd);
+if (!(is_running())) {
+
+    # Create a new object
+    my $xml = XML::Mini::Document->new();
+
+    # Init the doc from config file
+    $xml->fromFile($config_file);
+
+    # Read elements from XML data
+    my $source_dir = $xml->getElementByPath('photofiler/source_dir');
+    my $target_dir = $xml->getElementByPath('photofiler/target_dir');
+    my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
+
+    # Prepare variables
+    my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
+    my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
+    my $exif_pattern_val = $exif_pattern->text();
+
+    open(FH, '>>', $log_file) or die $!;
+
+    print FH "[" . get_timestamp() . "] Execute exiftool with parameters specified in $config_file.\n";
+    print FH "    Source directory: $source_dir_val\n";
+    print FH "    Target directory: $target_dir_val\n";
+    print FH "    Exif pattern:     $exif_pattern_val\n";
+
+    close(FH);
+
+    # Prepare exiftool command
+    my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val";
+
+    # Execute
+    my $result = `$cmd`;
+
+    open(FH, '>>', $log_file) or die $!;
+
+    print FH "[" . get_timestamp() . "] Execution of exiftool finished.\n";
+    print FH $result;
+
+    close(FH);
+
+} else {
+    open(FH, '>>', $log_file) or die $!;
+
+    print FH "[" . get_timestamp() . "] Skip execution of exiftool. Process is already running!\n";
+
+    close(FH);
+}
+
+# Crop log file
+system("cat $log_file | tail -n 100 > $log_file.tmp && mv $log_file.tmp $log_file");

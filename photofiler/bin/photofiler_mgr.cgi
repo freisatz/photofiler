@@ -8,14 +8,18 @@ use CGI;
 use XML::Mini;
 use XML::Mini::Document;
 
+# Set config file locations
+my $config_file = '/etc/photofiler/config.xml';
+my $schedule_config_file = '/etc/photofiler/schedule.xml';
+
+# Fetch request
 my $c = CGI->new;
 
+# Check if request has been send
 if ('POST' eq $c->request_method) {
 
-    my $config_file = '/etc/photofiler/config.xml';
-    my $schedule_config_file = '/etc/photofiler/schedule.xml';
-
     switch($c->param('cmd')) {
+        # Read exiftool settings from config file
         case 'read_settings' {
 
             print $c->header(
@@ -36,7 +40,8 @@ if ('POST' eq $c->request_method) {
             exit 0;
 
         }
-        case 'read_schedule_data' {
+        # Read schedule settings from config file
+        case 'read_schedule_settings' {
 
             print $c->header(
                 -type=>'text/plain',
@@ -56,6 +61,7 @@ if ('POST' eq $c->request_method) {
             exit 0;
 
         }
+        # Write exiftool settings to config file
         case 'write_settings' {
 
             print $c->header(
@@ -75,20 +81,22 @@ if ('POST' eq $c->request_method) {
             
             $xml->fromHash($hashref);
             $xml->toFile($config_file);
+
             exit 0;
 
         }
+        # Execute photofiler main script incorporating exiftool
         case 'execute_main' {
 
             print $c->header(
                 -type=>'text/plain',
                 -status=>'200 Success'
             );
-
             system('photofiler');
             exit 0;
         }
-        case 'activate_schedule' {
+        # Write schedule setting to config file
+        case 'edit_schedule' {
 
             print $c->header(
                 -type=>'text/plain',
@@ -98,6 +106,7 @@ if ('POST' eq $c->request_method) {
             my $hashref = { 
                 'photofiler' => {
                     'active' => $c->param('active'),
+                    'hour' => $c->param('hour'),
                 },
             };
             
@@ -106,9 +115,11 @@ if ('POST' eq $c->request_method) {
             $xml->fromHash($hashref);
             $xml->toFile($schedule_config_file);
 
-            system('photofiler-scheduler update');
+            system('photofiler-scheduler restart');
+
             exit 0;
         }
+        # Default action
         else {
             print $c->header(
                 -type=>'text/plain',

@@ -8,11 +8,13 @@
 		<field_source_dir len="999">Quellverzeichnis</field_source_dir>
 		<field_target_dir len="999">Zielverzeichnis</field_target_dir>
 		<field_exif_pattern len="999">Muster</field_exif_pattern>
+		<field_hour_schedule len="999">Uhrzeit</field_hour_schedule>
 		<field_activate_schedule len="999">Dienst aktivieren</field_activate_schedule>
 		<field_settings_title len="999">Einstellungen</field_settings_title>
 		<field_control_title len="999">Steuerung</field_control_title>
 		<title_select_source_dir len="999">Wähle Quellverzeichnis</title_select_source_dir>
 		<title_select_target_dir len="999">Wähle Zielverzeichnis</title_select_target_dir>
+		<msg_execute len="999">Fotos werden sortiert...</msg_execute>
 		<msg_over_select len="999">Es darf nur ein Verzeichnis ausgewählt werden!</msg_over_select>
   	</_PhotoFiler>
 </text>

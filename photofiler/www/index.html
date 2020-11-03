@@ -23,8 +23,8 @@ function page_load()
 {
 	$("input:text").inputReset();	
 
-	PhotoFiler_load_data();
-	PhotoFiler_load_schedule_data();
+	PhotoFiler_load_settings();
+	PhotoFiler_load_schedule_settings();
 
 	init_switch();
 
@@ -32,15 +32,15 @@ function page_load()
 	$("#d_control").show();
 
 	$("#b_save_settings").click(function(){
-		PhotoFiler_save_data();
+		PhotoFiler_save_settings();
 	});
 	
 	$("#b_reset_settings").click(function(){
-		PhotoFiler_load_data();
+		PhotoFiler_load_settings();
 	});
 
 	$("#i_activate_schedule").click(function(){
-		PhotoFiler_activate_schedule();
+		PhotoFiler_edit_schedule(parseInt($("#d_hour_schedule").attr('rel')));
 	});
 	
 	$("#b_execute_main").click(function(){
@@ -99,7 +99,7 @@ function page_unload()
 		<button type="button" class="_text" id="b_save_settings"><span class="_apps_text" lang="_PhotoFiler" datafld="button_save"></span></button>
 	</div>
 
-	<div style="height:40px"></div>
+	<div class="hr_0_content"><div class="hr_1"></div></div>
 </div>	
 
 <div id="d_control" style="display:none;">	
@@ -107,6 +107,51 @@ function page_unload()
 	
 	<div class="field_top">
 		<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" border="1" width="100%">
+			<tr>
+				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_hour_schedule"></span></td>
+				<td class="tdfield_padding" width="350px" colspan="2">
+					<div class="select_menu" id="DIV_Period_Hour">
+						<ul>
+							<li class="option_list">          
+								<div id="hour_schedule_select" class="wd_select option_selected">
+									<div class="sLeft wd_select_l"></div>
+									<div class="sBody text wd_select_m" id="d_hour_schedule" rel="00">00:00</div>
+									<div class="sRight wd_select_r"></div>	
+								</div>		
+							
+								<ul class="ul_obj" id="d_hour_schedule_li" style="width:90px;">
+									<div class='scrollbar_time'> 
+										<li rel="00"><a href="#" onclick="PhotoFiler_edit_schedule('0');">00:00</a></li>
+										<li rel="01"><a href="#" onclick="PhotoFiler_edit_schedule('1');">01:00</a></li>
+										<li rel="02"><a href="#" onclick="PhotoFiler_edit_schedule('2');">02:00</a></li>
+										<li rel="03"><a href="#" onclick="PhotoFiler_edit_schedule('3');">03:00</a></li>
+										<li rel="04"><a href="#" onclick="PhotoFiler_edit_schedule('4');">04:00</a></li>
+										<li rel="05"><a href="#" onclick="PhotoFiler_edit_schedule('5');">05:00</a></li>
+										<li rel="06"><a href="#" onclick="PhotoFiler_edit_schedule('6');">06:00</a></li>
+										<li rel="07"><a href="#" onclick="PhotoFiler_edit_schedule('7');">07:00</a></li>
+										<li rel="08"><a href="#" onclick="PhotoFiler_edit_schedule('8');">08:00</a></li>
+										<li rel="09"><a href="#" onclick="PhotoFiler_edit_schedule('9');">09:00</a></li>
+										<li rel="10"><a href="#" onclick="PhotoFiler_edit_schedule('10');">10:00</a></li>
+										<li rel="11"><a href="#" onclick="PhotoFiler_edit_schedule('11');">11:00</a></li>
+										<li rel="12"><a href="#" onclick="PhotoFiler_edit_schedule('12');">12:00</a></li>
+										<li rel="13"><a href="#" onclick="PhotoFiler_edit_schedule('13');">13:00</a></li>
+										<li rel="14"><a href="#" onclick="PhotoFiler_edit_schedule('14');">14:00</a></li>
+										<li rel="15"><a href="#" onclick="PhotoFiler_edit_schedule('15');">15:00</a></li>
+										<li rel="16"><a href="#" onclick="PhotoFiler_edit_schedule('16');">16:00</a></li>
+										<li rel="17"><a href="#" onclick="PhotoFiler_edit_schedule('17');">17:00</a></li>
+										<li rel="18"><a href="#" onclick="PhotoFiler_edit_schedule('18');">18:00</a></li>
+										<li rel="19"><a href="#" onclick="PhotoFiler_edit_schedule('19');">19:00</a></li>
+										<li rel="20"><a href="#" onclick="PhotoFiler_edit_schedule('20');">20:00</a></li>
+										<li rel="21"><a href="#" onclick="PhotoFiler_edit_schedule('21');">21:00</a></li>
+										<li rel="22"><a href="#" onclick="PhotoFiler_edit_schedule('22');">22:00</a></li>
+										<li rel="23"><a href="#" onclick="PhotoFiler_edit_schedule('23');">23:00</a></li>
+									</div>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</td>
+			</tr>
 			<tr>
 				<td class="tdfield"><span class="_apps_text" lang="_PhotoFiler" datafld="field_activate_schedule"></span></td>
 				<td class="tdfield_padding" width="350px" colspan="2">
@@ -121,6 +166,8 @@ function page_unload()
 		<button type="button" class="_text" id="b_execute_main"><span class="_apps_text" lang="_PhotoFiler" datafld="button_execute"></span></button>
 	</div>
 </div>
+
+<div class="field_top" style="border:0px solid red;height:10px"></div>
 
 </body>
 </html>
