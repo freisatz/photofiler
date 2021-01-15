@@ -1,5 +1,5 @@
 Package: photofiler
-Version: 1.0
+Version: 1.1
 Packager: freisatz
 Email: 
 Homepage: http://www.wd.com
@@ -14,5 +14,5 @@ StartDepend:
 StartConflict:
 CenterType: 1
 UserControl:
-MinFWVer:
+MinFWVer: 5.0
 MaxFWVer:

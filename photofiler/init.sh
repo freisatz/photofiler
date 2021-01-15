@@ -16,12 +16,13 @@ ln -s $path/share/Image-ExifTool-12.07/exiftool $BIN_PATH
 ln -s $path/bin/photofiler $BIN_PATH
 ln -s $path/bin/photofiler-scheduler $BIN_PATH
 
-WEB_PATH="/var/www/photofiler/"
+WEB_PATH="/var/www/apps/photofiler/"
 
 mkdir -p $WEB_PATH
 
 ln -s $path/share/images/photofiler.png $WEB_PATH
 ln -s $path/www/index.html $WEB_PATH
+ln -s $path/www/cgi_api.php $WEB_PATH
 ln -s $path/www/lang/*.xml $WEB_PATH
 ln -s $path/www/js/*.js $WEB_PATH
 ln -s $path/www/desc.xml $WEB_PATH

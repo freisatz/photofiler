@@ -1,6 +1,6 @@
 var APPS_XML_LANGUAGE_EN;
 var APPS_XML_LANGUAGE;
-var APPS_URL = "/photofiler/"
+var APPS_URL = "/apps/photofiler/";
 function apps_load_language() {
 	var multi_lang_idx = new Array(
         /*0*/	"en-US",
@@ -22,7 +22,7 @@ function apps_load_language() {
         /*16*/	"sv-SE",
         /*17*/	"tr-TR");
 				
-	var my_file = APPS_URL +multi_lang_idx[parseInt(MULTI_LANGUAGE, 10)].toString()+".xml";
+	var my_file = "/apps/photofiler/" + multi_lang_idx[parseInt(MULTI_LANGUAGE, 10)].toString() + ".xml";
 	
 	wd_ajax({
 		type: "GET",

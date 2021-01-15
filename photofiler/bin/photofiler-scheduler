@@ -1,83 +1,83 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python3
 
-use strict;
-use warnings;
-use Switch;
-
-use XML::Mini;
-use XML::Mini::Document;
+import os, sys
+import xml.etree.ElementTree as ET
 
 # Set config file locations
-my $schedule_config_file = '/etc/photofiler/schedule.xml';
+schedule_config_file = '/etc/photofiler/schedule.xml'
 
 # Check if first argument has been given
-my $length = @ARGV;
+length = len(sys.argv)
 
-if($length < 1) {
-	print "No argument given!\n";
-	exit 1;
-}
+if length < 2:
+	print("No command given!")
+	exit(1)
 
 # Removes any existing reference to photofiler from crontab
-sub remove_from_crontab {
-	system('sed -i "/photofiler/d" /var/spool/cron/crontabs/root');
-	system('killall crond');
-	system('crond');
-}
+def remove_from_crontab():
+	os.system('sed -i "/photofiler/d" /var/spool/cron/crontabs/root')
+	os.system('killall crond')
+	os.system('crond')
 
 # Adds a schedule for photofiler to crontab
-sub add_to_crontab {
-	my $hour = $_[0];
-	system("echo \"0 $hour * * * photofiler\" >> /var/spool/cron/crontabs/root");
-	system('killall crond');
-	system('crond');
-}
+def add_to_crontab(hour):
+	os.system("echo \"0 " + hour + " * * * photofiler\" >> /var/spool/cron/crontabs/root")
+	os.system('killall crond')
+	os.system('crond')
 
 # Returns 1 if config is set active in config file, 0 otherwise
-sub read_config {
+def read_config(schedule_config_file):
 		
-	# Create a new object
-	my $xml = XML::Mini::Document->new();
-
-	# Init the doc from config file
-	$xml->fromFile($schedule_config_file);
+	# Parse XML data
+	tree = ET.parse(schedule_config_file)
+	root = tree.getroot()
 
 	# Read values
-	my $active = 0;
-	if($xml->getElementByPath('photofiler/active')) {
-		$active = $xml->getElementByPath('photofiler/active')->text() ? "1" : "0";
-	}
+	active = 0
+	for active_node in root.findall('active'):
+		active = active_node.text
+		break
+	
+	hour = 0
+	for hour_node in root.findall('hour'):
+		hour = hour_node.text
 
-	my $hour = 0;
-	if($xml->getElementByPath('photofiler/hour')) {
-		$hour = $xml->getElementByPath('photofiler/hour')->text();
-	}
+	return active, hour
 
-	return ($active, $hour);
-}
-
-switch($ARGV[0]) {
+# Define command handlers
+def start_handler():
 	# Add cronjob if necessary 
-	case 'start' {
-		my ($active, $hour) = read_config();
-		if($active) {
-			add_to_crontab($hour);
-		}
-	}
+	active, hour = read_config('/etc/photofiler/schedule.xml')
+	if active:
+		add_to_crontab(hour)
+
+def stop_handler():
 	# Remove cronjob
-	case 'stop' {
-		remove_from_crontab();
-	}
-	# Remove cronjob and readd if necessary
-	case 'restart' {
-		remove_from_crontab();
-		my ($active, $hour) = read_config();
-		if($active) {
-			add_to_crontab($hour);
-		}
-	}
-	# Default action
-	else {
-		print "Action not recognized.\n";
-	}
+	remove_from_crontab()
+
+def restart_handler():
+	# Remove cronjob and re-add if necessary
+	stop_handler()
+	start_handler()
+
+def default_handler():
+	print("Command not recognized!")
+
+
+# Define available commands
+commands = {
+	'start': start_handler,
+	'stop': stop_handler,
+	'restart': restart_handler
 }
+
+cmd = sys.argv[1]
+
+# Execute command
+if cmd in commands:
+	commands[cmd]()
+	exit(0)
+else:
+	default_handler()
+	exit(1)
+	

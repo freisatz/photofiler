@@ -1,131 +1,86 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python3
 
-use strict;
-use warnings;
-use Switch;
-
-use CGI;
-use XML::Mini;
-use XML::Mini::Document;
+# Import modules for CGI handling 
+import cgi, cgitb 
+import xml.etree.cElementTree as cET
+import os
 
 # Set config file locations
-my $config_file = '/etc/photofiler/config.xml';
-my $schedule_config_file = '/etc/photofiler/schedule.xml';
+config_file = '/etc/photofiler/config.xml'
+schedule_config_file = '/etc/photofiler/schedule.xml'
 
 # Fetch request
-my $c = CGI->new;
+c = cgi.FieldStorage()
 
-# Check if request has been send
-if ('POST' eq $c->request_method) {
+# Define handlers
+def read_settings_handler():
+	f = open(config_file, "r")
+	print("Status: 200 Success")
+	print("Content-Type: text/html\n")
+	print(f.read())
 
-    switch($c->param('cmd')) {
-        # Read exiftool settings from config file
-        case 'read_settings' {
+def write_settings_handler():
+	
+	print("Status: 200 Success")                                                                                                                          
+	print("Content-Type: text/html\n")
 
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'200 Success'
-            );
+	photofiler = cET.Element("photofiler")
 
-            open(FH, '<', $config_file) or die $!;
+	cET.SubElement(photofiler, "source_dir").text = c.getvalue("source_dir")
+	cET.SubElement(photofiler, "target_dir").text = c.getvalue("target_dir")
+	cET.SubElement(photofiler, "exif_pattern").text = c.getvalue("exif_pattern")
 
-            my $record;
+	tree = cET.ElementTree(photofiler)
+	tree.write(config_file)
 
-            while($record = <FH>){
-                print $record;
-            }
+def read_schedule_settings_handler():
+	f = open(schedule_config_file, "r")
+	print("Status: 200 Success")
+	print("Content-Type: text/html\n")
+	print(f.read())
 
-            close(FH);
+def edit_schedule_handler():
+	
+	print("Status: 200 Success")                                                                                                                          
+	print("Content-Type: text/html\n")
 
-            exit 0;
+	photofiler = cET.Element("photofiler")
 
-        }
-        # Read schedule settings from config file
-        case 'read_schedule_settings' {
+	cET.SubElement(photofiler, "active").text = c.getvalue("active")
+	cET.SubElement(photofiler, "hour").text = c.getvalue("hour")
 
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'200 Success'
-            );
 
-            open(FH, '<', $schedule_config_file) or die $!;
+	tree = cET.ElementTree(photofiler)
+	tree.write(schedule_config_file)
 
-            my $record;
+def execute_main_handler():
+	
+	print("Status: 200 Success")                                                                                                                          
+	print("Content-Type: text/html\n")
 
-            while($record = <FH>){
-                print $record;
-            }
+	os.system('photofiler')
 
-            close(FH);
+def default_handler():
 
-            exit 0;
-
-        }
-        # Write exiftool settings to config file
-        case 'write_settings' {
-
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'200 Success'
-            );
-
-            my $hashref = { 
-                'photofiler' => {
-                    'source_dir' => $c->param('source_dir'), 
-                    'target_dir' => $c->param('target_dir'), 
-                    'exif_pattern' => $c->param('exif_pattern'),
-                },
-            };
-            
-            my $xml = XML::Mini::Document->new();
-            
-            $xml->fromHash($hashref);
-            $xml->toFile($config_file);
-
-            exit 0;
-
-        }
-        # Execute photofiler main script incorporating exiftool
-        case 'execute_main' {
-
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'200 Success'
-            );
-            system('photofiler');
-            exit 0;
-        }
-        # Write schedule setting to config file
-        case 'edit_schedule' {
-
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'200 Success'
-            );
-
-            my $hashref = { 
-                'photofiler' => {
-                    'active' => $c->param('active'),
-                    'hour' => $c->param('hour'),
-                },
-            };
-            
-            my $xml = XML::Mini::Document->new();
-            
-            $xml->fromHash($hashref);
-            $xml->toFile($schedule_config_file);
-
-            system('photofiler-scheduler restart');
-
-            exit 0;
-        }
-        # Default action
-        else {
-            print $c->header(
-                -type=>'text/plain',
-                -status=>'405 Method Not Allowed'
-            );
-            exit 1
-        }
-    }
+	print("Status: 405 Method Not Allowed")                                                                                                                          
+	print("Content-Type: text/html\n")
+	
+# Define available commands
+commands = {
+	'read_settings': read_settings_handler,
+	'write_settings': write_settings_handler,
+	'read_schedule_settings': read_schedule_settings_handler,
+	'edit_schedule': edit_schedule_handler,
+	'execute_main': execute_main_handler 
 }
+
+# Fetch command
+cmd = c.getvalue("cmd")
+
+# Execute command
+if cmd in commands:
+	commands[cmd]()
+	exit(0)
+else:
+	default_handler()
+	exit(1)

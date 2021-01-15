@@ -1,6 +1,6 @@
 function PhotoFiler_load_settings() {
     wd_ajax({
-        url: "/cgi-bin/photofiler_mgr.cgi",
+        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
         type: "POST",
         async: false,
         cache: false,
@@ -52,7 +52,7 @@ function PhotoFiler_hour_mapping(hour) {
 
 function PhotoFiler_load_schedule_settings() {
     wd_ajax({
-        url: "/cgi-bin/photofiler_mgr.cgi",
+        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
         type: "POST",
         async: false,
         cache: false,
@@ -70,7 +70,7 @@ function PhotoFiler_load_schedule_settings() {
 
 function PhotoFiler_save_settings() {
     wd_ajax({
-        url: "/cgi-bin/photofiler_mgr.cgi",
+        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
         type: "POST",
         async: true,
         cache: false,
@@ -84,7 +84,7 @@ function PhotoFiler_save_settings() {
 
 function PhotoFiler_edit_schedule(hours) {
     wd_ajax({
-        url: "/cgi-bin/photofiler_mgr.cgi",
+        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
         type: "POST",
         async: true,
         cache: false,
@@ -99,7 +99,7 @@ function PhotoFiler_edit_schedule(hours) {
 function PhotoFiler_execute_main() {
     jLoading(apps_T('_PhotoFiler','msg_execute'), 'loading' ,'s', "");
     wd_ajax({
-        url: "/cgi-bin/photofiler_mgr.cgi",
+        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
         type: "POST",
         async: true,
         cache: false,
@@ -117,7 +117,7 @@ function PhotoFiler_select_source_dir() {
         device: "HDD", //HDD, USB, ..., ALL
         root: '/mnt/HD',
         cmd: 'cgi_read_open_tree',
-        script: '/cgi-bin/folder_tree.cgi',
+        script: '/apps/photofiler/folder_tree.php',
         effect: 'no_son',
         formname: 'generic',
         textname: null,
@@ -147,7 +147,7 @@ function PhotoFiler_select_target_dir() {
         device: "HDD", //HDD, USB, ..., ALL
         root: '/mnt/HD',
         cmd: 'cgi_read_open_tree',
-        script: '/cgi-bin/folder_tree.cgi',
+        script: '/apps/photofiler/folder_tree.php',
         effect: 'no_son',
         formname: 'generic',
         textname: null,

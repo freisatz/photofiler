@@ -1,89 +1,92 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python3
 
-use XML::Mini;
-use XML::Mini::Document;
+import os
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from subprocess import PIPE, Popen
+
+# Executes code in shell
+def cmdline(command):
+    process = Popen(
+        args=command,
+        stdout=PIPE,
+        shell=True
+    )
+    return process.communicate()[0]
 
 # Set config file locations
-$config_file = '/etc/photofiler/config.xml';
+config_file = '/etc/photofiler/config.xml'
 
 # Set log file locations
-$log_file = '/var/log/photofiler.log';
+log_file = '/var/log/photofiler.log'
 
 # Returns true if process is already running
-sub is_running {
-    my $pidof = `pidof photofiler`;
-    chomp($pidof);
-    my @pids = split / /, $pidof;
+def is_running():
+    pidof = cmdline('pidof photofiler')
+    # pidof = pidof.rstrip("\n") 
+    # my @pids = split / /, $pidof;
 
-    for my $pid (@pids) {
-        if ($pid != $$) {
-            return 1;
-        }
-    }
-    return 0;
-}
+    # for my $pid (@pids) {
+    #     if ($pid != $$) {
+    #         return 1;
+    #     }
+    # }
+    return 0
 
 # Returns current timestamp
-sub get_timestamp {
-    my $date = `date`;
-    chomp($date);
-    return $date;
-}
+def get_timestamp():
+    now = datetime.now()
+    return now.strftime("%m/%d/%Y, %H:%M:%S")
 
 # Print stats to log file
-open(FH, '>>', $log_file) or die $!;
+FH = open(log_file, 'a')
+FH.write("[" + get_timestamp() + "] Starting photofiler...\n")
+FH.close()
 
-print FH "[" . get_timestamp() . "] Starting photofiler...\n";
-
-close(FH);
-
-if (!(is_running())) {
+if not is_running():
 
     # Create a new object
-    my $xml = XML::Mini::Document->new();
-
-    # Init the doc from config file
-    $xml->fromFile($config_file);
+    tree = ET.parse(config_file)
+    root = tree.getroot()
 
     # Read elements from XML data
-    my $source_dir = $xml->getElementByPath('photofiler/source_dir');
-    my $target_dir = $xml->getElementByPath('photofiler/target_dir');
-    my $exif_pattern = $xml->getElementByPath('photofiler/exif_pattern');
+    source_dir = ""
+    for source_dir_node in root.findall('source_dir'):
+        source_dir = '/mnt/HD/HD_a2/' + source_dir_node.text
+        break
 
-    # Prepare variables
-    my $source_dir_val = '/mnt/HD/HD_a2/' . $source_dir->text();
-    my $target_dir_val = '/mnt/HD/HD_a2/' . $target_dir->text();
-    my $exif_pattern_val = $exif_pattern->text();
+    target_dir = ""
+    for target_dir_node in root.findall('target_dir'):
+        target_dir = '/mnt/HD/HD_a2/' + target_dir_node.text
+        break
 
-    open(FH, '>>', $log_file) or die $!;
+    exif_pattern = ""
+    for exif_pattern_node in root.findall('exif_pattern'):
+        exif_pattern = exif_pattern_node.text
+        break
 
-    print FH "[" . get_timestamp() . "] Execute exiftool with parameters specified in $config_file.\n";
-    print FH "    Source directory: $source_dir_val\n";
-    print FH "    Target directory: $target_dir_val\n";
-    print FH "    Exif pattern:     $exif_pattern_val\n";
-
-    close(FH);
+    FH = open(log_file, 'a')
+    FH.write("[{t}] Execute exiftool with parameters specified in {f}\n".format(t=get_timestamp(), f=config_file))
+    FH.write("    Source directory: {s}\n".format(s=source_dir))
+    FH.write("    Target directory: {t}\n".format(t=target_dir))
+    FH.write("    Exif pattern:     {p}\n".format(p=exif_pattern))
+    FH.close()
 
     # Prepare exiftool command
-    my $cmd = "exiftool -overwrite_original -P -r -d $target_dir_val/$exif_pattern_val \"-filename<CreateDate\" $source_dir_val";
-
+    cmd = "exiftool -overwrite_original -P -r -d {t}/{p} \"-filename<CreateDate\" {s}".format(s=source_dir, t=target_dir, p=exif_pattern)
+    
     # Execute
-    my $result = `$cmd`;
+    result = cmdline(cmd)
 
-    open(FH, '>>', $log_file) or die $!;
+    FH = open(log_file, 'a')
+    FH.write("[{t}] Execution of exiftool finished.\n".format(t=get_timestamp()))
+    FH.write(result.decode('utf-8'))
+    FH.close()
 
-    print FH "[" . get_timestamp() . "] Execution of exiftool finished.\n";
-    print FH $result;
-
-    close(FH);
-
-} else {
-    open(FH, '>>', $log_file) or die $!;
-
-    print FH "[" . get_timestamp() . "] Skip execution of exiftool. Process is already running!\n";
-
-    close(FH);
-}
+else:
+    FH = open(log_file, 'a')
+    FH.write("[" + get_timestamp() + "] Skip execution of exiftool. Process is already running!\n")
+    FH.close()
 
 # Crop log file
-system("cat $log_file | tail -n 100 > $log_file.tmp && mv $log_file.tmp $log_file");
+cmdline("cat {f} | tail -n 100 > {f}.tmp && mv {f}.tmp {f}".format(f=log_file))
