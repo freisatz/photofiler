@@ -1,5 +1,5 @@
 #!/bin/sh
 
-path=$1
+INSTALL_PATH=$1
 
-rm -rf $path
+rm -rf $INSTALL_PATH

@@ -22,7 +22,7 @@ function apps_load_language() {
         /*16*/	"sv-SE",
         /*17*/	"tr-TR");
 				
-	var my_file = "/apps/photofiler/" + multi_lang_idx[parseInt(MULTI_LANGUAGE, 10)].toString() + ".xml";
+	var my_file = APPS_URL +multi_lang_idx[parseInt(MULTI_LANGUAGE, 10)].toString()+".xml";
 	
 	wd_ajax({
 		type: "GET",

@@ -1,13 +1,17 @@
 #!/bin/sh
 
-rm -rf /usr/local/lib/perl
+BIN_PATH="/usr/bin"
+SETTINGS_PATH="/etc/photofiler"
+WEB_PATH="/var/www/apps/photofiler"
+XML_PATH="/var/www/xml"
 
-rm /usr/bin/exiftool
-rm /usr/bin/photofiler
-rm /usr/bin/photofiler-scheduler
+rm -f $BIN_PATH/photofiler
+rm -f $BIN_PATH/photofiler-runner
+rm -f $BIN_PATH/photofiler-scheduler
 
-rm -rf /var/www/apps/photofiler/
+rm -rf $SETTINGS_PATH
 
-rm -rf /etc/photofiler/
+rm -rf $WEB_PATH
 
-rm /var/www/cgi-bin/photofiler_mgr.cgi
+rm -f $XML_PATH/photofiler_config.xml
+rm -f $XML_PATH/photofiler_schedule.xml

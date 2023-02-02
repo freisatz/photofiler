@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+
+import os
+import xml.etree.ElementTree as ET
+from subprocess import check_output
+from datetime import datetime
+
+# Set config file locations
+config_file = '/etc/photofiler/config.xml'
+
+# Set log file locations
+log_file = '/var/log/photofiler.log'
+
+# Returns true if process is already running
+def is_running():
+    pids = check_output(['pidof', 'photofiler-runner']).split()
+
+    for pid in pids:
+        if int(pid) != os.getpid():
+            return True
+
+    return False
+
+# Returns current timestamp
+def get_timestamp():
+    return datetime.now().ctime()
+
+# Print stats to log file
+f = open(log_file, "a")
+f.write("[{timestamp}] Starting photofiler...\n".format(timestamp=get_timestamp()))
+f.close()
+
+if not is_running():
+
+    # Init the doc from config file
+    tree = ET.parse(config_file)
+    root = tree.getroot()
+
+    # Read elements from XML data
+    source_dir = root.find('source_dir')
+    target_dir = root.find('target_dir')
+    exif_pattern = root.find('exif_pattern')
+
+    # Prepare variables
+    source_dir_val = '/mnt/HD/HD_a2/{source}'.format(source=source_dir.text)
+    target_dir_val = '/mnt/HD/HD_a2/{target}'.format(target=target_dir.text)
+    exif_pattern_val = exif_pattern.text
+
+    # Print stats to log file
+    f = open(log_file, "a")
+    f.write("[{timestamp}] Execute photofiler with parameters specified in {conf}.\n".format(timestamp=get_timestamp(), conf=config_file))
+    f.write("    Source directory: {source}\n".format(source=source_dir_val))
+    f.write("    Target directory: {target}\n".format(target=target_dir_val))
+    f.write("    Exif pattern:     {pattern}\n".format(pattern=exif_pattern_val))
+    f.close()
+
+    # Execute photofiler business logic
+    result = check_output(['photofiler', source_dir_val, os.path.join(target_dir_val, exif_pattern_val)]).decode('utf-8')
+
+    f = open(log_file, "a")
+    f.write(result)
+    f.write("[{timestamp}] Execution of phototiler finished.\n".format(timestamp=get_timestamp()))
+    f.close()
+
+else:
+    f = open(log_file, "a")
+    f.write("[{timestamp}] Skip execution of photofiler. Process is already running!\n".format(timestamp=get_timestamp()))
+    f.close()
+
+# Crop log file
+os.system('cat {log} | tail -n 100 > {log}.tmp && mv {log}.tmp {log}'.format(log=log_file))

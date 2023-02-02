@@ -23,8 +23,8 @@ function page_load()
 {
 	$("input:text").inputReset();	
 
-	PhotoFiler_load_settings();
-	PhotoFiler_load_schedule_settings();
+	PhotoFiler_load_config();
+	PhotoFiler_load_schedule();
 
 	init_switch();
 
@@ -32,11 +32,11 @@ function page_load()
 	$("#d_control").show();
 
 	$("#b_save_settings").click(function(){
-		PhotoFiler_save_settings();
+		PhotoFiler_edit_config();
 	});
 	
 	$("#b_reset_settings").click(function(){
-		PhotoFiler_load_settings();
+		PhotoFiler_load_config();
 	});
 
 	$("#i_activate_schedule").click(function(){

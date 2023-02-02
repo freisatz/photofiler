@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, sys
+import sys, os
 import xml.etree.ElementTree as ET
 
 # Set config file locations
@@ -10,74 +10,65 @@ schedule_config_file = '/etc/photofiler/schedule.xml'
 length = len(sys.argv)
 
 if length < 2:
-	print("No command given!")
+	print("No argument given!")
 	exit(1)
 
 # Removes any existing reference to photofiler from crontab
 def remove_from_crontab():
-	os.system('sed -i "/photofiler/d" /var/spool/cron/crontabs/root')
+	os.system('sed -i "/photofiler-runner/d" /var/spool/cron/crontabs/root')
 	os.system('killall crond')
 	os.system('crond')
 
 # Adds a schedule for photofiler to crontab
 def add_to_crontab(hour):
-	os.system("echo \"0 " + hour + " * * * photofiler\" >> /var/spool/cron/crontabs/root")
+	os.system('echo "0 {h} * * * photofiler-runner" >> /var/spool/cron/crontabs/root'.format(h=hour))
 	os.system('killall crond')
 	os.system('crond')
 
 # Returns 1 if config is set active in config file, 0 otherwise
-def read_config(schedule_config_file):
-		
-	# Parse XML data
+def read_config():
+	
+	# Parse config file	
 	tree = ET.parse(schedule_config_file)
 	root = tree.getroot()
 
 	# Read values
-	active = 0
-	for active_node in root.findall('active'):
-		active = active_node.text
-		break
-	
-	hour = 0
-	for hour_node in root.findall('hour'):
-		hour = hour_node.text
+	active = False
+	if root.find('active') != None:
+		literal = root.find('active').text
+		active = True if literal.lower() != 'false' and literal != '0' and literal != '' else False
 
+	hour = 0
+	if root.find('hour') != None:
+		hour = root.find('hour').text
+	
 	return active, hour
 
-# Define command handlers
-def start_handler():
-	# Add cronjob if necessary 
-	active, hour = read_config('/etc/photofiler/schedule.xml')
-	if active:
-		add_to_crontab(hour)
-
-def stop_handler():
-	# Remove cronjob
+def start():
+	# add cronjob if necessary 
+	with open('/var/spool/cron/crontabs/root') as crontab:                  
+                if not 'photofiler-runner' in crontab.read():                   
+                        active, hour = read_config()                            
+                        if active:                                              
+                                add_to_crontab(hour)
+def stop():
+	# remove cronjob
 	remove_from_crontab()
 
-def restart_handler():
-	# Remove cronjob and re-add if necessary
-	stop_handler()
-	start_handler()
+def restart():
+	# remove cronjob and readd if necessary
+	stop()
+	start()
 
-def default_handler():
-	print("Command not recognized!")
+def action_not_found():
+	print('Action not recognized.')
 
+# select action
+action = {
+	'start': start,
+	'stop': stop,
+	'restart': restart
+}.get(sys.argv[1], action_not_found)
 
-# Define available commands
-commands = {
-	'start': start_handler,
-	'stop': stop_handler,
-	'restart': restart_handler
-}
-
-cmd = sys.argv[1]
-
-# Execute command
-if cmd in commands:
-	commands[cmd]()
-	exit(0)
-else:
-	default_handler()
-	exit(1)
-	
+# run action
+action()

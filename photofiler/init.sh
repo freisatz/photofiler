@@ -1,39 +1,37 @@
 #!/bin/sh
 
-path=$1
+INSTALL_PATH=$1
 
-PERL_LIB_PATH='/usr/local/lib/perl/5.10.1/'
+BIN_PATH="/usr/bin"
 
-mkdir -p $PERL_LIB_PATH
+chmod +x $INSTALL_PATH/bin/photofiler
+chmod +x $INSTALL_PATH/bin/photofiler-runner
+chmod +x $INSTALL_PATH/bin/photofiler-scheduler
+chmod +x $INSTALL_PATH/bin/photofiler_mgr.cgi
 
-ln -s $path/share/Image-ExifTool-12.07/lib/Image $PERL_LIB_PATH
-ln -s $path/share/Image-ExifTool-12.07/lib/File $PERL_LIB_PATH
-ln -s $path/share/XML-Mini-1.38/lib/XML $PERL_LIB_PATH
+ln -s $INSTALL_PATH/bin/photofiler $BIN_PATH
+ln -s $INSTALL_PATH/bin/photofiler-runner $BIN_PATH
+ln -s $INSTALL_PATH/bin/photofiler-scheduler $BIN_PATH
 
-BIN_PATH="/usr/bin/"
-
-ln -s $path/share/Image-ExifTool-12.07/exiftool $BIN_PATH
-ln -s $path/bin/photofiler $BIN_PATH
-ln -s $path/bin/photofiler-scheduler $BIN_PATH
-
-WEB_PATH="/var/www/apps/photofiler/"
+WEB_PATH="/var/www/apps/photofiler"
 
 mkdir -p $WEB_PATH
 
-ln -s $path/share/images/photofiler.png $WEB_PATH
-ln -s $path/www/index.html $WEB_PATH
-ln -s $path/www/cgi_api.php $WEB_PATH
-ln -s $path/www/lang/*.xml $WEB_PATH
-ln -s $path/www/js/*.js $WEB_PATH
-ln -s $path/www/desc.xml $WEB_PATH
+ln -s $INSTALL_PATH/share/images/photofiler.png $WEB_PATH
+ln -s $INSTALL_PATH/www/index.html $WEB_PATH
+ln -s $INSTALL_PATH/www/lang/*.xml $WEB_PATH
+ln -s $INSTALL_PATH/www/js/*.js $WEB_PATH
+ln -s $INSTALL_PATH/www/desc.xml $WEB_PATH
+ln -s $INSTALL_PATH/www/photofiler.php $WEB_PATH
 
-CGI_PATH="/var/www/cgi-bin/"
+XML_PATH="/var/www/xml"
 
-ln -s $path/bin/photofiler_mgr.cgi $CGI_PATH
+ln -s $INSTALL_PATH/etc/photofiler/config.xml $XML_PATH/photofiler_config.xml
+ln -s $INSTALL_PATH/etc/photofiler/schedule.xml $XML_PATH/photofiler_schedule.xml
 
-SETTINGS_PATH="/etc/photofiler/"
+SETTINGS_PATH="/etc/photofiler"
 
 mkdir -p $SETTINGS_PATH
 
-ln -s $path/etc/photofiler/config.xml $SETTINGS_PATH
-ln -s $path/etc/photofiler/schedule.xml $SETTINGS_PATH
+ln -s $INSTALL_PATH/etc/photofiler/config.xml $SETTINGS_PATH
+ln -s $INSTALL_PATH/etc/photofiler/schedule.xml $SETTINGS_PATH

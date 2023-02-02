@@ -1,10 +1,10 @@
-function PhotoFiler_load_settings() {
+function PhotoFiler_load_config() {
     wd_ajax({
-        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
+        url: "/xml/photofiler_config.xml",
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'read_settings'},	
+        data:{cmd:'load_config'},	
         dataType:"xml",
         success: function(xml){
             var source_dir = $(xml).find("photofiler").find("source_dir").text();          
@@ -16,8 +16,8 @@ function PhotoFiler_load_settings() {
             var exif_pattern = $(xml).find("photofiler").find("exif_pattern").text();          
             $("#i_exif_pattern").val(exif_pattern);
             $("#i_exif_pattern").flexReload();
-		}
-	});
+        }
+    });
 }
 
 function PhotoFiler_hour_mapping(hour) {
@@ -50,41 +50,41 @@ function PhotoFiler_hour_mapping(hour) {
     return hour_array[hour];
 }
 
-function PhotoFiler_load_schedule_settings() {
+function PhotoFiler_load_schedule() {
     wd_ajax({
-        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
+        url: "/xml/photofiler_schedule.xml",
         type: "POST",
         async: false,
         cache: false,
-        data:{cmd:'read_schedule_settings'},	
+        data:{cmd:'load_settings'},	
         dataType:"xml",
         success: function(xml){
             var active = $(xml).find("photofiler").find("active").text();     
             setSwitch('#i_activate_schedule', active);           
             $("#i_activate_schedule").flexReload();
             var hour = $(xml).find("photofiler").find("hour").text();  
-			reset_sel_item("#hour_schedule_select",PhotoFiler_hour_mapping(hour),hour);
-		}
-	});
+            reset_sel_item("#hour_schedule_select",PhotoFiler_hour_mapping(hour),hour);
+        }
+    });
 }
 
-function PhotoFiler_save_settings() {
+function PhotoFiler_edit_config() {
     wd_ajax({
-        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
+        url: "/apps/photofiler/photofiler.php",
         type: "POST",
         async: true,
         cache: false,
-        data:{cmd:'write_settings',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
+        data:{cmd:'edit_config',source_dir:$("#i_source_dir").val(),target_dir:$("#i_target_dir").val(),exif_pattern:$("#i_exif_pattern").val()},	
         dataType:"xml",
         success: function(xml){
             //
-		}
-	});
+        }
+    });
 }
 
 function PhotoFiler_edit_schedule(hours) {
     wd_ajax({
-        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
+        url: "/apps/photofiler/photofiler.php",
         type: "POST",
         async: true,
         cache: false,
@@ -92,14 +92,14 @@ function PhotoFiler_edit_schedule(hours) {
         dataType:"xml",
         success: function(xml){
             //
-		}
-	});
+        }
+    });
 }
 
 function PhotoFiler_execute_main() {
     jLoading(apps_T('_PhotoFiler','msg_execute'), 'loading' ,'s', "");
     wd_ajax({
-        url: "/apps/photofiler/cgi_api.php?cgi_name=photofiler_mgr",
+        url: "/apps/photofiler/photofiler.php",
         type: "POST",
         async: true,
         cache: false,
@@ -107,8 +107,8 @@ function PhotoFiler_execute_main() {
         dataType:"xml",
         success: function(xml){
             jLoadingClose();
-		}
-	});
+        }
+    });
 }
 
 function PhotoFiler_select_source_dir() {
@@ -117,7 +117,7 @@ function PhotoFiler_select_source_dir() {
         device: "HDD", //HDD, USB, ..., ALL
         root: '/mnt/HD',
         cmd: 'cgi_read_open_tree',
-        script: '/apps/photofiler/folder_tree.php',
+        script: '/cgi-bin/folder_tree.cgi',
         effect: 'no_son',
         formname: 'generic',
         textname: null,
@@ -147,7 +147,7 @@ function PhotoFiler_select_target_dir() {
         device: "HDD", //HDD, USB, ..., ALL
         root: '/mnt/HD',
         cmd: 'cgi_read_open_tree',
-        script: '/apps/photofiler/folder_tree.php',
+        script: '/cgi-bin/folder_tree.cgi',
         effect: 'no_son',
         formname: 'generic',
         textname: null,

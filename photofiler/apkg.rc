@@ -1,11 +1,11 @@
 Package: photofiler
-Version: 1.1
+Version: 2.0
 Packager: freisatz
 Email: 
 Homepage: http://www.wd.com
 Description: A simple tool to file photos into a folder structure based on exif data.
 Icon: photofiler.png
-AddonShowName: Simple Photo Filer
+AddonShowName: Photo Filer
 AddonIndexPage: index.html
 AddonUsedPort: 8000
 InstDepend:
@@ -14,5 +14,5 @@ StartDepend:
 StartConflict:
 CenterType: 1
 UserControl:
-MinFWVer: 5.0
+MinFWVer:
 MaxFWVer:

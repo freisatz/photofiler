@@ -1,92 +1,104 @@
 #!/usr/bin/python3
 
-import os
-import xml.etree.ElementTree as ET
+import re, os, sys
 from datetime import datetime
-from subprocess import PIPE, Popen
 
-# Executes code in shell
-def cmdline(command):
-    process = Popen(
-        args=command,
-        stdout=PIPE,
-        shell=True
-    )
-    return process.communicate()[0]
+sys.path.append('/mnt/HD/HD_a2/Nas_Prog/photofiler/share/python')
 
-# Set config file locations
-config_file = '/etc/photofiler/config.xml'
+from exif import Image
+from exif import DATETIME_STR_FORMAT
 
-# Set log file locations
-log_file = '/var/log/photofiler.log'
+def resolve_vars_count(pattern, count):
+    match = re.search(r'%([-_\.]{0,1})c', pattern)
 
-# Returns true if process is already running
-def is_running():
-    pidof = cmdline('pidof photofiler')
-    # pidof = pidof.rstrip("\n") 
-    # my @pids = split / /, $pidof;
+    if match:
+        span = match.span()
+        padding = match[1]
+        rest = pattern[span[1]:]
 
-    # for my $pid (@pids) {
-    #     if ($pid != $$) {
-    #         return 1;
-    #     }
-    # }
-    return 0
+        pattern = pattern[0:span[0]] + padding + str(count) + resolve_vars_count(rest, count)
 
-# Returns current timestamp
-def get_timestamp():
-    now = datetime.now()
-    return now.strftime("%m/%d/%Y, %H:%M:%S")
+    return pattern
 
-# Print stats to log file
-FH = open(log_file, 'a')
-FH.write("[" + get_timestamp() + "] Starting photofiler...\n")
-FH.close()
 
-if not is_running():
+def resolve_vars_no_count(pattern):
+    return re.sub(r'%([-_\.]{0,1})c', '', pattern)
 
-    # Create a new object
-    tree = ET.parse(config_file)
-    root = tree.getroot()
 
-    # Read elements from XML data
-    source_dir = ""
-    for source_dir_node in root.findall('source_dir'):
-        source_dir = '/mnt/HD/HD_a2/' + source_dir_node.text
-        break
+def resolve_vars_path(pattern, ddir, dfile, dext):
+    match = re.search(r'%([lu]{0,1})([dfe])', pattern)
 
-    target_dir = ""
-    for target_dir_node in root.findall('target_dir'):
-        target_dir = '/mnt/HD/HD_a2/' + target_dir_node.text
-        break
+    replace_dict = { 
+        'd': ddir, 
+        'f': dfile,
+        'e': dext
+    }
 
-    exif_pattern = ""
-    for exif_pattern_node in root.findall('exif_pattern'):
-        exif_pattern = exif_pattern_node.text
-        break
+    if match:
+        span = match.span()
+        replace = replace_dict[match[2]]
+        if match[1] == 'l':
+            replace = replace.lower()
+        elif match[1] == 'u':
+            replace = replace.upper()
+        rest = pattern[span[1]:]
 
-    FH = open(log_file, 'a')
-    FH.write("[{t}] Execute exiftool with parameters specified in {f}\n".format(t=get_timestamp(), f=config_file))
-    FH.write("    Source directory: {s}\n".format(s=source_dir))
-    FH.write("    Target directory: {t}\n".format(t=target_dir))
-    FH.write("    Exif pattern:     {p}\n".format(p=exif_pattern))
-    FH.close()
+        pattern = pattern[0:span[0]] + replace + resolve_vars_path(rest, ddir, dfile, dext)
 
-    # Prepare exiftool command
-    cmd = "exiftool -overwrite_original -P -r -d {t}/{p} \"-filename<CreateDate\" {s}".format(s=source_dir, t=target_dir, p=exif_pattern)
+    return pattern
+
+  
+def resolve_vars(pattern, ddir, dfile, dext):
+    pattern = resolve_vars_path(pattern, ddir, dfile, dext)
+  
+    f = resolve_vars_no_count(pattern)
+
+    if f != pattern:
+      count = 0
+      while os.path.exists(f):
+        count += 1
+        f = resolve_vars_count(pattern, count)
+
+    return f 
+
+def resolve_path(source_path, target_pattern, datetime_original):
+    dt = datetime.strptime(datetime_original, DATETIME_STR_FORMAT)
+    pattern = dt.strftime(target_pattern)
+
+    ddir = os.path.dirname(source_path)
+    dfile, dext = os.path.splitext(os.path.basename(source_path))
+    dext = dext[1:]
+
+    return resolve_vars(pattern, ddir, dfile, dext)
+
+
+def move(source_path, target_path, override=False):
+  target_dir = os.path.dirname(target_path)
+  if not os.path.isdir(target_dir):
+    os.makedirs(target_dir)
+  if override or not os.path.exists(target_path):
+    os.rename(source_path, target_path)
+
+
+def process_file(source_path, target_pattern, override=False):
+
+  with open(source_path, 'rb') as image_file:
+    img = Image(image_file)
     
-    # Execute
-    result = cmdline(cmd)
+    if not img.has_exif:
+      return False
+    
+    target_path = resolve_path(source_path, target_pattern, img.datetime_original)
+    move(source_path, target_path, override=override)
 
-    FH = open(log_file, 'a')
-    FH.write("[{t}] Execution of exiftool finished.\n".format(t=get_timestamp()))
-    FH.write(result.decode('utf-8'))
-    FH.close()
+    return True
 
-else:
-    FH = open(log_file, 'a')
-    FH.write("[" + get_timestamp() + "] Skip execution of exiftool. Process is already running!\n")
-    FH.close()
 
-# Crop log file
-cmdline("cat {f} | tail -n 100 > {f}.tmp && mv {f}.tmp {f}".format(f=log_file))
+def process_dir(source_dir_path, target_pattern, override=False):
+  for file_name in os.listdir(source_dir_path):
+    file_path = os.path.join(source_dir_path, file_name)
+    process_file(file_path, target_pattern, override=override)
+
+
+# move photos to target path
+process_dir(sys.argv[1], sys.argv[2])

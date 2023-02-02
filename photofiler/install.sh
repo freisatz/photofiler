@@ -1,17 +1,19 @@
 #!/bin/sh
 
-path_src=$1
-path_des=$2
+UPLOAD_PATH=$1
+INSTALL_PATH=$2
 
-tar xzvf $path_src/Image-ExifTool-12.07.tar.gz --directory=$path_src/share/
-tar xzvf $path_src/XML-Mini-1.38.tar.gz --directory=$path_src/share/
+mkdir -p $UPLOAD_PATH/share/python
 
-rm -f $path_src/Image-ExifTool-12.07.tar.gz
-rm -f $path_src/XML-Mini-1.38.tar.gz
+unzip -d $UPLOAD_PATH/share/python $UPLOAD_PATH/exif-1.6.0-py3-none-any.whl
+unzip -d $UPLOAD_PATH/share/python $UPLOAD_PATH/plum_py-0.8.5-py3-none-any.whl
 
-mv $path_src $path_des
+rm -f $UPLOAD_PATH/exif-1.6.0-py3-none-any.whl
+rm -f $UPLOAD_PATH/plum_py-0.8.5-py3-none-any.whl
+
+mv $UPLOAD_PATH $INSTALL_PATH
 
 if [ -d /mnt/HD/HD_a2/.systemfile/photofiler ]; then
-	cp -R /mnt/HD/HD_a2/.systemfile/photofiler/etc "${path_des}/photofiler/"
+	cp -R /mnt/HD/HD_a2/.systemfile/photofiler/etc "${INSTALL_PATH}/photofiler/"
 	rm -rf /mnt/HD/HD_a2/.systemfile/photofiler
 fi

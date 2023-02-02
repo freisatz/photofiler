@@ -1,11 +1,9 @@
-# Simple Photo Filer
+# Photo Filer
 A simple tool to file photos into a folder structure based on exif data.
 
 This is an implementation of an App Package to be used with a WD My Cloud OS3 NAS device.
 
 https://developer.westerndigital.com/develop/wd/sdk.html
-
-This tool is based on exiftool, see http://www.exiftool.org.
 
 ## Build
 To create a binary, use the toolchain provided by Western Digital
