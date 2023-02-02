@@ -73,6 +73,13 @@ def resolve_path(source_path, target_pattern, datetime_original):
     return resolve_vars(pattern, ddir, dfile, dext)
 
 
+def create_dir(path, st):
+  if not os.path.isdir(path):
+    create_dir(os.path.dirname(path), st)
+    os.mkdir(path)
+    os.chown(path, st.st_uid, st.st_gid)
+
+
 def process_file(source_path, target_pattern, override=False, verbose=False):
 
   with open(source_path, 'rb') as image_file:
@@ -84,8 +91,7 @@ def process_file(source_path, target_pattern, override=False, verbose=False):
     target_path = resolve_path(source_path, target_pattern, img.datetime_original)      
     target_dir = os.path.dirname(target_path)
     
-    if not os.path.isdir(target_dir):
-      os.makedirs(target_dir)
+    create_dir(target_dir, os.stat(source_path))
 
     if override or not os.path.exists(target_path):
       os.rename(source_path, target_path)
