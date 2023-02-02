@@ -55,7 +55,7 @@ if not is_running():
     f.close()
 
     # Execute photofiler business logic
-    result = check_output(['photofiler', source_dir_val, os.path.join(target_dir_val, exif_pattern_val)]).decode('utf-8')
+    result = check_output(['photofiler', '-v', source_dir_val, os.path.join(target_dir_val, exif_pattern_val)]).decode('utf-8')
 
     f = open(log_file, "a")
     f.write(result)

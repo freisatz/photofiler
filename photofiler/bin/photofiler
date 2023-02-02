@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import re, os, sys
+import re, os, sys, argparse
 from datetime import datetime
 
 sys.path.append('/mnt/HD/HD_a2/Nas_Prog/photofiler/share/python')
@@ -61,6 +61,7 @@ def resolve_vars(pattern, ddir, dfile, dext):
 
     return f 
 
+
 def resolve_path(source_path, target_pattern, datetime_original):
     dt = datetime.strptime(datetime_original, DATETIME_STR_FORMAT)
     pattern = dt.strftime(target_pattern)
@@ -72,15 +73,7 @@ def resolve_path(source_path, target_pattern, datetime_original):
     return resolve_vars(pattern, ddir, dfile, dext)
 
 
-def move(source_path, target_path, override=False):
-  target_dir = os.path.dirname(target_path)
-  if not os.path.isdir(target_dir):
-    os.makedirs(target_dir)
-  if override or not os.path.exists(target_path):
-    os.rename(source_path, target_path)
-
-
-def process_file(source_path, target_pattern, override=False):
+def process_file(source_path, target_pattern, override=False, verbose=False):
 
   with open(source_path, 'rb') as image_file:
     img = Image(image_file)
@@ -88,17 +81,50 @@ def process_file(source_path, target_pattern, override=False):
     if not img.has_exif:
       return False
     
-    target_path = resolve_path(source_path, target_pattern, img.datetime_original)
-    move(source_path, target_path, override=override)
+    target_path = resolve_path(source_path, target_pattern, img.datetime_original)      
+    target_dir = os.path.dirname(target_path)
+    
+    if not os.path.isdir(target_dir):
+      os.makedirs(target_dir)
+
+    if override or not os.path.exists(target_path):
+      os.rename(source_path, target_path)
+      if verbose:
+        print("\"{source}\" has been moved to \"{target}\".".format(source=source_path, target=target_path))
+    else:
+      if verbose:
+        print("\"{source}\" could not be moved because \"{target}\" already exists.".format(source=source_path, target=target_path))
+        print("Use --override to replace target file.")
 
     return True
 
 
-def process_dir(source_dir_path, target_pattern, override=False):
+def process_dir(source_dir_path, target_pattern, override=False, verbose=False):
   for file_name in os.listdir(source_dir_path):
     file_path = os.path.join(source_dir_path, file_name)
-    process_file(file_path, target_pattern, override=override)
+    process_file(file_path, target_pattern, override=override, verbose=verbose)
 
+
+def process(source_path, target_pattern, override=False, verbose=False):
+
+  if os.path.isdir(source_path):
+    process_dir(source_path, target_pattern, override=override, verbose=verbose)
+  elif os.path.isfile(source_path):
+    process_file(source_path, target_pattern, override=override, verbose=verbose)
+  else:
+    print('File not found.')
+
+
+parser = argparse.ArgumentParser(
+  prog = 'PhotoFiler',
+  description = 'A simple tool to file image files in a folder structure based on exif data.')
+
+parser.add_argument('file', help='The source file path.')
+parser.add_argument('pattern', help="The target file path as a pattern containing references to exif data")
+parser.add_argument('-o', '--override', action='store_true', help='If set, any existing file is overwritten.')
+parser.add_argument('-v', '--verbose', action='store_true', help='Show verbose output.')
+
+args = parser.parse_args()
 
 # move photos to target path
-process_dir(sys.argv[1], sys.argv[2])
+process(args.file, args.pattern, override=args.override, verbose=args.verbose)
