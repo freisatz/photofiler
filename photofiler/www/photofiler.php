@@ -1,5 +1,14 @@
 <?php
 
+require_once ("/var/www/web/lib/login_checker.php");
+
+session_start();           
+
+if (login_check() != 1) {    
+    print("Not authorized.");                 
+    exit;
+}
+
 function execute_main() {
     # Execute photofiler main script
     shell_exec('photofiler-runner');
