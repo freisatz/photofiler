@@ -48,6 +48,8 @@ function edit_schedule($file) {
     $doc->appendChild($root);
     $doc->save($file);
 
+    shell_exec('photofiler-scheduler restart');
+
 }
 
 # Set config file locations
