@@ -83,26 +83,34 @@ def create_dir(path, st):
 def process_file(source_path, target_pattern, override=False, verbose=False):
 
   with open(source_path, 'rb') as image_file:
-    img = Image(image_file)
-    
-    if not img.has_exif:
+
+    try:
+
+      img = Image(image_file)
+      
+      if not img.has_exif:
+        print("\"{file}\" has been skipped. No EXIF data available.".format(file=source_path))
+        return False
+      
+      target_path = resolve_path(source_path, target_pattern, img.datetime_original)      
+      target_dir = os.path.dirname(target_path)
+      
+      create_dir(target_dir, os.stat(source_path))
+
+      if override or not os.path.exists(target_path):
+        os.rename(source_path, target_path)
+        if verbose:
+          print("\"{source}\" has been moved to \"{target}\".".format(source=source_path, target=target_path))
+      else:
+        if verbose:
+          print("\"{source}\" could not be moved because \"{target}\" already exists.".format(source=source_path, target=target_path))
+          print("Use --override to replace target file.")
+
+      return True
+
+    except ValueError:
+      print("\"{file}\" has been skipped. Not a valid image file.".format(file=source_path))
       return False
-    
-    target_path = resolve_path(source_path, target_pattern, img.datetime_original)      
-    target_dir = os.path.dirname(target_path)
-    
-    create_dir(target_dir, os.stat(source_path))
-
-    if override or not os.path.exists(target_path):
-      os.rename(source_path, target_path)
-      if verbose:
-        print("\"{source}\" has been moved to \"{target}\".".format(source=source_path, target=target_path))
-    else:
-      if verbose:
-        print("\"{source}\" could not be moved because \"{target}\" already exists.".format(source=source_path, target=target_path))
-        print("Use --override to replace target file.")
-
-    return True
 
 
 def process_dir(source_dir_path, target_pattern, override=False, verbose=False):
