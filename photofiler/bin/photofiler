@@ -107,8 +107,9 @@ def process_file(source_path, target_pattern, override=False, verbose=False):
 
 def process_dir(source_dir_path, target_pattern, override=False, verbose=False):
   for file_name in os.listdir(source_dir_path):
-    file_path = os.path.join(source_dir_path, file_name)
-    process_file(file_path, target_pattern, override=override, verbose=verbose)
+    if not os.path.isdir(file_name):
+      file_path = os.path.join(source_dir_path, file_name)
+      process_file(file_path, target_pattern, override=override, verbose=verbose)
 
 
 def process(source_path, target_pattern, override=False, verbose=False):
