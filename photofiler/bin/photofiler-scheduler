@@ -4,71 +4,82 @@ import sys, os
 import xml.etree.ElementTree as ET
 
 # Set config file locations
-schedule_config_file = '/etc/photofiler/schedule.xml'
+schedule_config_file = "/etc/photofiler/schedule.xml"
 
 # Check if first argument has been given
 length = len(sys.argv)
 
 if length < 2:
-	print("No argument given!")
-	exit(1)
+    print("No argument given!")
+    exit(1)
+
 
 # Removes any existing reference to photofiler from crontab
 def remove_from_crontab():
-	os.system('sed -i "/photofiler-runner/d" /var/spool/cron/crontabs/root')
-	os.system('killall crond')
-	os.system('crond')
+    os.system('sed -i "/photofiler-runner/d" /opt/etc/crontab')
+    os.system("/opt/etc/init.d/S10cron restart")
+
 
 # Adds a schedule for photofiler to crontab
 def add_to_crontab(hour):
-	os.system('echo "0 {h} * * * photofiler-runner" >> /var/spool/cron/crontabs/root'.format(h=hour))
-	os.system('killall crond')
-	os.system('crond')
+    os.system(
+        'echo "0 {h} * * * root photofiler-runner" >> /opt/etc/crontab'.format(h=hour)
+    )
+    os.system("/opt/etc/init.d/S10cron restart")
+
 
 # Returns 1 if config is set active in config file, 0 otherwise
 def read_config():
-	
-	# Parse config file	
-	tree = ET.parse(schedule_config_file)
-	root = tree.getroot()
 
-	# Read values
-	active = False
-	if root.find('active') != None:
-		literal = root.find('active').text
-		active = True if literal.lower() != 'false' and literal != '0' and literal != '' else False
+    # Parse config file
+    tree = ET.parse(schedule_config_file)
+    root = tree.getroot()
 
-	hour = 0
-	if root.find('hour') != None:
-		hour = root.find('hour').text
-	
-	return active, hour
+    # Read values
+    active = False
+    if root.find("active") != None:
+        literal = root.find("active").text
+        active = (
+            True
+            if literal.lower() != "false" and literal != "0" and literal != ""
+            else False
+        )
+
+    hour = 0
+    if root.find("hour") != None:
+        hour = root.find("hour").text
+
+    return active, hour
+
 
 def start():
-	# add cronjob if necessary 
-	with open('/var/spool/cron/crontabs/root') as crontab:                  
-                if not 'photofiler-runner' in crontab.read():                   
-                        active, hour = read_config()                            
-                        if active:                                              
-                                add_to_crontab(hour)
+    # add cronjob if necessary
+    with open("/var/spool/cron/crontabs/root") as crontab:
+        if not "photofiler-runner" in crontab.read():
+            active, hour = read_config()
+            if active:
+                add_to_crontab(hour)
+
+
 def stop():
-	# remove cronjob
-	remove_from_crontab()
+    # remove cronjob
+    remove_from_crontab()
+
 
 def restart():
-	# remove cronjob and readd if necessary
-	stop()
-	start()
+    # remove cronjob and readd if necessary
+    stop()
+    start()
+
 
 def action_not_found():
-	print('Action not recognized.')
+    print("Action not recognized.")
+
 
 # select action
-action = {
-	'start': start,
-	'stop': stop,
-	'restart': restart
-}.get(sys.argv[1], action_not_found)
+action = {"start": start, "stop": stop, "restart": restart}.get(
+    sys.argv[1], action_not_found
+)
 
 # run action
 action()

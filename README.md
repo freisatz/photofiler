@@ -1,22 +1,33 @@
 # Photo Filer
+
 A simple tool to file photos into a folder structure based on exif data.
 
 This is an implementation of an App Package to be used with a WD My Cloud OS5 NAS device.
 
-https://developer.westerndigital.com/develop/wd/sdk.html
+<https://developer.westerndigital.com/develop/wd/sdk.html>
 
 ## Build
+
 To create a binary, use the toolchain provided by Western Digital
 
-```
+```bash
 cd photofiler
-%path%/%to%/MyCloudOS5_mksapkg -E -s -m WDMyCloudEX2
+%path%/%to%/MyCloudOS5_mksapkg -E -s -m WDMyCloudEX2Ultra
 ```
 
-This process generates a `.bin` file which can be installed on a WD My Cloud OS5 NAS device using 
+This process generates a `.bin` file which can be installed on a WD My Cloud OS5 NAS device using
 that device's web interface.
 
-You can get the SDK at https://developer.westerndigital.com/develop/wd/sdk/downloads.html. 
+You can get the SDK at <https://developer.westerndigital.com/develop/wd/sdk/downloads.html>.
+
+## Prerequesites
+
+In order for the scheduler to work, you need to install `cron` from entware. First, [install entware](https://github.com/Entware/Entware/wiki). You can then install cron using
+
+```bash
+opkg update
+opkg install cron
+```
 
 ## Configuration
 
@@ -32,7 +43,7 @@ The following variables can be set in order to determine the behaviour of the fi
 | Time of day      | Scheduled time for execution of the script.                          |
 | Activate service | Activates the scheduled execution of the script.                     |
 
-The file pattern uses format codes to resolve an individual target file path for every image file in the source directory. Those format codes are derived from `exiftool`. 
+The file pattern uses format codes to resolve an individual target file path for every image file in the source directory. Those format codes are derived from `exiftool`.
 
 To refer to the `datetime_original` field in the exif data, you can use the format codes of the function `datetime.strptime` in Python 3. The major directives are listed below
 
